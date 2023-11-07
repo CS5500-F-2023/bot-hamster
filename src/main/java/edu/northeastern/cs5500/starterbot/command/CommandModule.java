@@ -57,4 +57,18 @@ public class CommandModule {
     public StringSelectHandler provideDropdownCommandMenuHandler(DropdownCommand dropdownCommand) {
         return dropdownCommand;
     }
+
+    @Provides
+    @IntoMap
+    @StringKey(CatchCommand.NAME)
+    public SlashCommandHandler provideCatchCommand(CatchCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey(CatchCommand.NAME)
+    public ButtonHandler provideCatchCommandClickHandler(CatchCommand command) {
+        return command;
+    }
 }
