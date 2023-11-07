@@ -2,6 +2,7 @@ package edu.northeastern.cs5500.starterbot.command;
 
 import edu.northeastern.cs5500.starterbot.controller.PokedexController;
 import edu.northeastern.cs5500.starterbot.controller.PokemonController;
+import edu.northeastern.cs5500.starterbot.controller.TrainerController;
 import edu.northeastern.cs5500.starterbot.model.Pokemon;
 import edu.northeastern.cs5500.starterbot.model.PokemonSpecies;
 import javax.annotation.Nonnull;
@@ -22,8 +23,9 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
 
     @Inject PokedexController pokedexController;
 
-    @Inject // ????
-    PokemonController pokemonController;
+    @Inject PokemonController pokemonController;
+
+    @Inject TrainerController trainerController;
 
     @Inject
     public CatchCommand() {
@@ -57,7 +59,9 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
 
         MessageCreateBuilder messageCreateBuilder = new MessageCreateBuilder();
         messageCreateBuilder =
-                messageCreateBuilder.addActionRow(Button.primary(getName() + ":catch", "Catch"));
+                messageCreateBuilder.addActionRow(
+                        Button.primary(
+                                getName() + ":catch:" + pokemon.getId().toString(), "Catch"));
         messageCreateBuilder = messageCreateBuilder.addEmbeds(embedBuilder.build());
 
         event.reply(messageCreateBuilder.build()).queue();
@@ -65,7 +69,20 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
 
     @Override
     public void onButtonInteraction(@Nonnull ButtonInteractionEvent event) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onButtonInteraction'");
+        // must mean the user clicked Catch
+        String trainerDiscordId = event.getMember().getId();
+        String pokemonId = event.getButton().getId().split(":")[2];
+
+        trainerController.addPokemonToTrainer(trainerDiscordId, pokemonId);
+        Pokemon pokemon = pokemonController.getPokemonById(pokemonId);
+        PokemonSpecies species =
+                pokedexController.getPokemonSpeciesByNumber(pokemon.getPokedexNumber());
+
+        // <@%s> creats a reference to the discordId
+        event.reply(
+                        String.format(
+                                "Player <@%s> caught Pokemon %s",
+                                trainerDiscordId, species.getName()))
+                .queue();
     }
 }

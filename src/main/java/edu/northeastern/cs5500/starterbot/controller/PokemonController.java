@@ -6,7 +6,10 @@ import edu.northeastern.cs5500.starterbot.repository.GenericRepository;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import javax.inject.Singleton;
+import org.bson.types.ObjectId;
 
+@Singleton
 public class PokemonController {
 
     GenericRepository<Pokemon> pokemonRepository;
@@ -70,5 +73,9 @@ public class PokemonController {
     public Pokemon catchRandomPokemon() {
         // Chosen randomly
         return catchPokemon(1);
+    }
+
+    public Pokemon getPokemonById(String pokemonId) {
+        return pokemonRepository.get(new ObjectId(pokemonId));
     }
 }

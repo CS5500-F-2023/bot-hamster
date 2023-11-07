@@ -1,5 +1,6 @@
 package edu.northeastern.cs5500.starterbot.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 import org.bson.types.ObjectId;
@@ -12,5 +13,5 @@ public class Trainer implements Model {
     // e.g. event.getUser().getId()
     String discordUserId;
 
-    List<ObjectId> pokemonInventory;
+    List<ObjectId> pokemonInventory = new ArrayList<>();
 }
