@@ -4,7 +4,6 @@ import edu.northeastern.cs5500.starterbot.model.Pokemon;
 import edu.northeastern.cs5500.starterbot.model.Pokemon.PokemonBuilder;
 import edu.northeastern.cs5500.starterbot.repository.GenericRepository;
 import java.util.Objects;
-import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -14,7 +13,9 @@ import org.bson.types.ObjectId;
 public class PokemonController {
 
     GenericRepository<Pokemon> pokemonRepository;
-    private Random random = new Random();
+
+    // TODO: uncomment out the code below to implement pokemon randomly
+    // private Random random = new Random();
 
     @Inject
     PokemonController(GenericRepository<Pokemon> pokemonRepository) {
@@ -39,6 +40,7 @@ public class PokemonController {
                 builder.specialAttack(11);
                 builder.specialDefense(11);
                 builder.speed(9);
+                builder.total(68);
                 break;
             case 4:
                 builder.hp(18);
@@ -47,6 +49,7 @@ public class PokemonController {
                 builder.specialAttack(11);
                 builder.specialDefense(10);
                 builder.speed(11);
+                builder.total(77);
                 break;
             case 7:
                 builder.hp(19);
@@ -55,6 +58,7 @@ public class PokemonController {
                 builder.specialAttack(11);
                 builder.specialDefense(11);
                 builder.speed(9);
+                builder.total(77);
                 break;
             case 19:
                 builder.hp(18);
@@ -63,6 +67,7 @@ public class PokemonController {
                 builder.specialAttack(7);
                 builder.specialDefense(8);
                 builder.speed(12);
+                builder.total(63);
                 break;
             default:
                 throw new IllegalStateException();

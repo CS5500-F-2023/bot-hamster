@@ -2,9 +2,11 @@ package edu.northeastern.cs5500.starterbot.controller;
 
 import edu.northeastern.cs5500.starterbot.model.InventoryItem;
 import edu.northeastern.cs5500.starterbot.model.InventoryItemType;
+import edu.northeastern.cs5500.starterbot.model.Pokemon;
 import edu.northeastern.cs5500.starterbot.model.Trainer;
 import edu.northeastern.cs5500.starterbot.repository.GenericRepository;
 import java.util.Collection;
+import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -13,6 +15,9 @@ import org.bson.types.ObjectId;
 @Singleton
 public class TrainerController {
     GenericRepository<Trainer> trainerRepository;
+
+    private Random random = new Random();
+    PokemonController pokemonController;
 
     @Inject
     TrainerController(GenericRepository<Trainer> trainerRepository) {
@@ -68,5 +73,26 @@ public class TrainerController {
             }
         }
         return 0;
+    }
+
+    public Pokemon getRandomPokemonFromTrainer(String discordMemberId) {
+        Trainer trainer = getTrainerForMemberId(discordMemberId);
+        if (trainer.getPokemonInventory().isEmpty()) {
+            return null;
+        }
+
+        int randomInventoryItemIndex = random.nextInt(trainer.getPokemonInventory().size());
+        InventoryItem randomInventoryItem =
+                trainer.getPokemonInventory().get(randomInventoryItemIndex);
+
+        if (randomInventoryItem.getInventoryItemType() == InventoryItemType.POKEMON) {
+            String pokemonObjectId = randomInventoryItem.getObjectId().toString();
+
+            // NOTE: Not sure if it is a good design to include PokemonController in this
+            // TrainerController
+            return pokemonController.getPokemonById(pokemonObjectId);
+        } else {
+            return null;
+        }
     }
 }
