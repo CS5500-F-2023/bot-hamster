@@ -4,6 +4,7 @@ import edu.northeastern.cs5500.starterbot.model.Pokemon;
 import edu.northeastern.cs5500.starterbot.model.Pokemon.PokemonBuilder;
 import edu.northeastern.cs5500.starterbot.repository.GenericRepository;
 import java.util.Objects;
+import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -13,6 +14,7 @@ import org.bson.types.ObjectId;
 public class PokemonController {
 
     GenericRepository<Pokemon> pokemonRepository;
+    private Random random = new Random();
 
     @Inject
     PokemonController(GenericRepository<Pokemon> pokemonRepository) {
@@ -72,7 +74,10 @@ public class PokemonController {
 
     public Pokemon catchRandomPokemon() {
         // Chosen randomly
+
+        // TODO: select pokemon randomly (after setting up the database)
         return catchPokemon(1);
+        // return catchPokemon(random.nextInt(20) + 1);
     }
 
     public Pokemon getPokemonById(String pokemonId) {
