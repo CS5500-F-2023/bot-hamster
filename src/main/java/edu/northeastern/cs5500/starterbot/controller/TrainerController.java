@@ -5,7 +5,9 @@ import edu.northeastern.cs5500.starterbot.model.InventoryItemType;
 import edu.northeastern.cs5500.starterbot.model.Pokemon;
 import edu.northeastern.cs5500.starterbot.model.Trainer;
 import edu.northeastern.cs5500.starterbot.repository.GenericRepository;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -77,22 +79,19 @@ public class TrainerController {
 
     public Pokemon getRandomPokemonFromTrainer(String discordMemberId) {
         Trainer trainer = getTrainerForMemberId(discordMemberId);
-        if (trainer.getPokemonInventory().isEmpty()) {
-            return null;
+        List<InventoryItem> pokemonList = new ArrayList<>();
+        for (InventoryItem item : trainer.getPokemonInventory()) {
+            if (item.getInventoryItemType() == InventoryItemType.POKEMON) {
+                pokemonList.add(item);
+            }
         }
 
-        int randomInventoryItemIndex = random.nextInt(trainer.getPokemonInventory().size());
-        InventoryItem randomInventoryItem =
-                trainer.getPokemonInventory().get(randomInventoryItemIndex);
-
-        if (randomInventoryItem.getInventoryItemType() == InventoryItemType.POKEMON) {
-            String pokemonObjectId = randomInventoryItem.getObjectId().toString();
-
-            // NOTE: Not sure if it is a good design to include PokemonController in this
-            // TrainerController
-            return pokemonController.getPokemonById(pokemonObjectId);
-        } else {
+        if (pokemonList.isEmpty()) {
             return null;
+        } else {
+            int randomIndex = random.nextInt(pokemonList.size());
+            String pokemonObjectId = pokemonList.get(randomIndex).getObjectId().toString();
+            return pokemonController.getPokemonById(pokemonObjectId);
         }
     }
 }
