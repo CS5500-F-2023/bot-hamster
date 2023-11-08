@@ -73,16 +73,29 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
         String trainerDiscordId = event.getMember().getId();
         String pokemonId = event.getButton().getId().split(":")[2];
 
-        trainerController.addPokemonToTrainer(trainerDiscordId, pokemonId);
         Pokemon pokemon = pokemonController.getPokemonById(pokemonId);
         PokemonSpecies species =
                 pokedexController.getPokemonSpeciesByNumber(pokemon.getPokedexNumber());
+        int pokeBallCount = trainerController.getPokeBallCount(trainerDiscordId);
 
-        // <@%s> creats a reference to the discordId
-        event.reply(
-                        String.format(
-                                "Player <@%s> caught Pokemon %s",
-                                trainerDiscordId, species.getName()))
-                .queue();
+        if (pokeBallCount <= 0) {
+            // <@%s> creats a reference to the discordId
+            event.reply(
+                            String.format(
+                                    "Pokemon run away! Player <@%s> has no PokeBall.",
+                                    trainerDiscordId, species.getName()))
+                    .queue();
+
+        } else {
+            trainerController.addPokemonToTrainer(trainerDiscordId, pokemonId);
+            trainerController.updatePokeBallToTrainer(trainerDiscordId, -1);
+            event.reply(
+                            String.format(
+                                    "Congratulations! Player <@%s> caught Pokemon %s!",
+                                    trainerDiscordId,
+                                    species.getName(),
+                                    trainerController.getPokeBallCount(trainerDiscordId)))
+                    .queue();
+        }
     }
 }
