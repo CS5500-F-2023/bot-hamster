@@ -57,22 +57,31 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
         embedBuilder.setTitle(String.format("A wild %s appears!", species.getName()));
 
         // TODO: Adjust UI design if necessary
-        embedBuilder.addField(
-                "**Level**: " + Integer.toString(pokemon.getLevel()),
-                "**HP: **" + Integer.toString(pokemon.getHp()),
-                true);
-        embedBuilder.addField(
-                "**Attack: **" + Integer.toString(pokemon.getAttack()),
-                "**Defense: **" + Integer.toString(pokemon.getDefense()),
-                false);
-        embedBuilder.addField(
-                "**SpecialAttack: **" + Integer.toString(pokemon.getSpecialAttack()),
-                "**SpecialDefense: **" + Integer.toString(pokemon.getSpecialDefense()),
-                true);
-        embedBuilder.addField(
-                "**Speed: **" + Integer.toString(pokemon.getSpeed()),
-                "**Total: **" + Integer.toString(pokemon.getTotal()),
-                true);
+        embedBuilder.setDescription(
+                "**Level**: "
+                        + Integer.toString(pokemon.getLevel())
+                        + "\n"
+                        + "**HP: **"
+                        + Integer.toString(pokemon.getHp())
+                        + "\n"
+                        + "**Attack: **"
+                        + Integer.toString(pokemon.getAttack())
+                        + "\n"
+                        + "**Defense: **"
+                        + Integer.toString(pokemon.getDefense())
+                        + "\n"
+                        + "**SpecialAttack: **"
+                        + Integer.toString(pokemon.getSpecialAttack())
+                        + "\n"
+                        + "**SpecialDefense: **"
+                        + Integer.toString(pokemon.getSpecialDefense())
+                        + "\n"
+                        + "**Speed: **"
+                        + Integer.toString(pokemon.getSpeed())
+                        + "\n"
+                        + "**Total: **"
+                        + Integer.toString(pokemon.getTotal()));
+
         embedBuilder.setThumbnail(species.getImageUrl());
 
         MessageCreateBuilder messageCreateBuilder = new MessageCreateBuilder();

@@ -39,9 +39,12 @@ public class TrainerController {
         trainer.setDiscordUserId(discordMemberId);
 
         // TODO: Modified the trainer's initial inventory items as needed.
-        // Initialized the trainer's inventory with 3 Pokeball
-        InventoryItem pokeball = new InventoryItem(new ObjectId(), InventoryItemType.POKEBALL, 3);
-        trainer.getPokemonInventory().add(pokeball);
+        InventoryItem initialPokeBall =
+                new InventoryItem(new ObjectId(), InventoryItemType.POKEBALL, 3);
+        InventoryItem initialCoinBalance =
+                new InventoryItem(new ObjectId(), InventoryItemType.COIN, 100);
+        trainer.getPokemonInventory().add(initialPokeBall);
+        trainer.getPokemonInventory().add(initialCoinBalance);
 
         return trainerRepository.add(trainer);
     }
@@ -71,6 +74,29 @@ public class TrainerController {
 
         for (InventoryItem item : trainer.getPokemonInventory()) {
             if (item.getInventoryItemType() == InventoryItemType.POKEBALL) {
+                return item.getQuantity();
+            }
+        }
+        return 0;
+    }
+
+    public void updateCoinBalance(String discordMemberId, int numOfCoin) {
+        Trainer trainer = getTrainerForMemberId(discordMemberId);
+
+        for (InventoryItem item : trainer.getPokemonInventory()) {
+            if (item.getInventoryItemType() == InventoryItemType.COIN) {
+                int newQuantity = item.getQuantity() + numOfCoin;
+                item.setQuantity(newQuantity);
+            }
+        }
+        trainerRepository.update(trainer);
+    }
+
+    public int getCoinBalance(String discordMemberId) {
+        Trainer trainer = getTrainerForMemberId(discordMemberId);
+
+        for (InventoryItem item : trainer.getPokemonInventory()) {
+            if (item.getInventoryItemType() == InventoryItemType.COIN) {
                 return item.getQuantity();
             }
         }
