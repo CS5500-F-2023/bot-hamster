@@ -74,6 +74,20 @@ public class CommandModule {
 
     @Provides
     @IntoMap
+    @StringKey(HealCommand.NAME)
+    public SlashCommandHandler provideHealCommand(HealCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey(HealCommand.NAME)
+    public StringSelectHandler provideHealCommandMenuHandler(HealCommand dropdownCommand) {
+        return dropdownCommand;
+    }
+
+    @Provides
+    @IntoMap
     @StringKey(SearchCommand.NAME)
     public SlashCommandHandler provideSearchCommand(SearchCommand command) {
         return command;

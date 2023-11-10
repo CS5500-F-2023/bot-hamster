@@ -14,6 +14,9 @@ public class PokemonController {
 
     GenericRepository<Pokemon> pokemonRepository;
 
+    // TODO: uncomment out the code below to implement pokemon randomly
+    // private Random random = new Random();
+
     @Inject
     PokemonController(GenericRepository<Pokemon> pokemonRepository) {
         this.pokemonRepository = pokemonRepository;
@@ -37,6 +40,7 @@ public class PokemonController {
                 builder.specialAttack(11);
                 builder.specialDefense(11);
                 builder.speed(9);
+                builder.total(68);
                 break;
             case 4:
                 builder.hp(18);
@@ -45,6 +49,7 @@ public class PokemonController {
                 builder.specialAttack(11);
                 builder.specialDefense(10);
                 builder.speed(11);
+                builder.total(77);
                 break;
             case 7:
                 builder.hp(19);
@@ -53,6 +58,7 @@ public class PokemonController {
                 builder.specialAttack(11);
                 builder.specialDefense(11);
                 builder.speed(9);
+                builder.total(77);
                 break;
             case 19:
                 builder.hp(18);
@@ -61,6 +67,7 @@ public class PokemonController {
                 builder.specialAttack(7);
                 builder.specialDefense(8);
                 builder.speed(12);
+                builder.total(63);
                 break;
             default:
                 throw new IllegalStateException();
@@ -72,7 +79,10 @@ public class PokemonController {
 
     public Pokemon catchRandomPokemon() {
         // Chosen randomly
+
+        // TODO: select pokemon randomly (after setting up the database)
         return catchPokemon(1);
+        // return catchPokemon(random.nextInt(20) + 1);
     }
 
     public Pokemon getPokemonById(String pokemonId) {

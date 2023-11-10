@@ -13,5 +13,9 @@ public class Trainer implements Model {
     // e.g. event.getUser().getId()
     String discordUserId;
 
+    int pokeBallQuantity;
+
+    int coinBalance;
+
     List<ObjectId> pokemonInventory = new ArrayList<>();
 }
