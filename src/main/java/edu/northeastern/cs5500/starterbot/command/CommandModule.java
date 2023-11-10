@@ -71,4 +71,11 @@ public class CommandModule {
     public ButtonHandler provideCatchCommandClickHandler(CatchCommand command) {
         return command;
     }
+
+    @Provides
+    @IntoMap
+    @StringKey(SearchCommand.NAME)
+    public SlashCommandHandler provideSearchCommand(SearchCommand command) {
+        return command;
+    }
 }
