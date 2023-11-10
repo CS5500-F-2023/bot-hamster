@@ -9,13 +9,12 @@ import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 
 @Slf4j
-public class SearchCommand implements SlashCommandHandler, ButtonHandler {
+public class SearchCommand implements SlashCommandHandler {
 
     static final String NAME = "search";
 
@@ -83,20 +82,30 @@ public class SearchCommand implements SlashCommandHandler, ButtonHandler {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(String.format("%s", species.getName()));
         embedBuilder.setThumbnail(species.getImageUrl());
-        embedBuilder.addField(
-                "Pokedex Number", Integer.toString(pokemon.getPokedexNumber()), false);
-        embedBuilder.addField("Level", Integer.toString(pokemon.getLevel()), false);
-        embedBuilder.addField("HP", Integer.toString(pokemon.getHp()), true);
-        embedBuilder.addField("Attack", Integer.toString(pokemon.getAttack()), true);
-        embedBuilder.addField("Defense", Integer.toString(pokemon.getDefense()), true);
-        embedBuilder.addField("Special Attack", Integer.toString(pokemon.getSpecialAttack()), true);
-        embedBuilder.addField(
-                "Special Defense", Integer.toString(pokemon.getSpecialDefense()), true);
-        embedBuilder.addField("Speed", Integer.toString(pokemon.getSpeed()), true);
-        embedBuilder.addField("Total", Integer.toString(pokemon.getTotal()), false);
+        embedBuilder.setDescription(
+                "**Level**: "
+                        + Integer.toString(pokemon.getLevel())
+                        + "\n"
+                        + "**HP: **"
+                        + Integer.toString(pokemon.getHp())
+                        + "\n"
+                        + "**Attack: **"
+                        + Integer.toString(pokemon.getAttack())
+                        + "\n"
+                        + "**Defense: **"
+                        + Integer.toString(pokemon.getDefense())
+                        + "\n"
+                        + "**SpecialAttack: **"
+                        + Integer.toString(pokemon.getSpecialAttack())
+                        + "\n"
+                        + "**SpecialDefense: **"
+                        + Integer.toString(pokemon.getSpecialDefense())
+                        + "\n"
+                        + "**Speed: **"
+                        + Integer.toString(pokemon.getSpeed())
+                        + "\n"
+                        + "**Total: **"
+                        + Integer.toString(pokemon.getTotal()));
         return embedBuilder;
     }
-
-    @Override
-    public void onButtonInteraction(@Nonnull ButtonInteractionEvent event) {}
 }
