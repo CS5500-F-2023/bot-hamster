@@ -85,4 +85,11 @@ public class CommandModule {
     public StringSelectHandler provideHealCommandMenuHandler(HealCommand dropdownCommand) {
         return dropdownCommand;
     }
+
+    @Provides
+    @IntoMap
+    @StringKey(SearchCommand.NAME)
+    public SlashCommandHandler provideSearchCommand(SearchCommand command) {
+        return command;
+    }
 }

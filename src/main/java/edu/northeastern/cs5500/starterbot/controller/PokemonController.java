@@ -88,4 +88,8 @@ public class PokemonController {
     public Pokemon getPokemonById(String pokemonId) {
         return pokemonRepository.get(new ObjectId(pokemonId));
     }
+
+    public Pokemon searchPokemonByPokedexNumber(int pokedexNumber) {
+        return catchPokemon(pokedexNumber);
+    }
 }
