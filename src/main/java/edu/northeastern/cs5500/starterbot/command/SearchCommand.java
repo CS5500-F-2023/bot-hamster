@@ -93,6 +93,7 @@ public class SearchCommand implements SlashCommandHandler, ButtonHandler {
         embedBuilder.addField(
                 "Special Defense", Integer.toString(pokemon.getSpecialDefense()), true);
         embedBuilder.addField("Speed", Integer.toString(pokemon.getSpeed()), true);
+        embedBuilder.addField("Total", Integer.toString(pokemon.getTotal()), false);
         return embedBuilder;
     }
 
