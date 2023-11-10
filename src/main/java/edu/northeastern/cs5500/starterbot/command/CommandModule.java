@@ -71,4 +71,18 @@ public class CommandModule {
     public ButtonHandler provideCatchCommandClickHandler(CatchCommand command) {
         return command;
     }
+
+    @Provides
+    @IntoMap
+    @StringKey(HealCommand.NAME)
+    public SlashCommandHandler provideHealCommand(HealCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey(HealCommand.NAME)
+    public StringSelectHandler provideHealCommandMenuHandler(HealCommand dropdownCommand) {
+        return dropdownCommand;
+    }
 }
