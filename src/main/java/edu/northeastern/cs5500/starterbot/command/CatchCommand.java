@@ -47,7 +47,7 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
 
     @Override
     public void onSlashCommandInteraction(@Nonnull SlashCommandInteractionEvent event) {
-        log.info("event: /catch, event: /battle");
+        log.info("event: /catch, event: /fight");
         Pokemon pokemon = pokemonController.catchRandomPokemon();
         PokemonSpecies species =
                 pokedexController.getPokemonSpeciesByNumber(pokemon.getPokedexNumber());
@@ -89,7 +89,7 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
                 messageCreateBuilder.addActionRow(
                         Button.primary(getName() + ":catch:" + pokemon.getId().toString(), "Catch"),
                         Button.secondary(
-                                getName() + ":battle:" + pokemon.getId().toString(), "Battle"));
+                                getName() + ":fight:" + pokemon.getId().toString(), "Fight"));
         messageCreateBuilder = messageCreateBuilder.addEmbeds(embedBuilder.build());
 
         event.reply(messageCreateBuilder.build()).queue();
@@ -108,7 +108,7 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
         if (event.getButton().getId().startsWith(getName() + ":catch:")) {
             catchButton(event, trainerDiscordId, pokemonId, species);
         } else {
-            battleButton(event, trainerDiscordId, pokemonId, species, pokemonStatsTotal);
+            fightButton(event, trainerDiscordId, pokemonId, species, pokemonStatsTotal);
         }
     }
 
@@ -117,7 +117,7 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
             String trainerDiscordId,
             String pokemonId,
             PokemonSpecies species) {
-        int pokeBallCount = trainerController.getPokeBallCount(trainerDiscordId);
+        int pokeBallCount = trainerController.getPokeBallQuantityFromTrainer(trainerDiscordId);
         if (pokeBallCount <= 0) {
             // <@%s> creates a reference to the discordId
             event.reply(
@@ -127,7 +127,7 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
                     .queue();
         } else {
             trainerController.addPokemonToTrainer(trainerDiscordId, pokemonId);
-            trainerController.updatePokeBallToTrainer(trainerDiscordId, -1);
+            trainerController.updatePokeBallForTrainer(trainerDiscordId, -1);
             event.reply(
                             String.format(
                                     "Congratulations! Player <@%s> caught Pokemon %s!",
@@ -136,7 +136,7 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
         }
     }
 
-    private void battleButton(
+    private void fightButton(
             @Nonnull ButtonInteractionEvent event,
             String trainerDiscordId,
             String pokemonId,
@@ -154,20 +154,20 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
             } else if (randomPokemon.getTotal() < pokemonStatsTotal) {
                 event.reply(
                                 String.format(
-                                        "Pokemon run away! Player <@%s> lost in battle with Pokemon %s!",
+                                        "Pokemon run away! Player <@%s> lost in a fight with Pokemon %s!",
                                         trainerDiscordId, species.getName()))
                         .queue();
             } else {
                 event.reply(
                                 String.format(
-                                        "Tie! Battle Pokemon %s again!",
+                                        "Tie! Fight Pokemon %s again!",
                                         trainerDiscordId, species.getName()))
                         .queue();
             }
         } else {
             event.reply(
                             String.format(
-                                    "Player <@%s> has no Pokemon available to battle with Pokemon %s.",
+                                    "Player <@%s> has no Pokemon available to fight with Pokemon %s.",
                                     trainerDiscordId, species.getName()))
                     .queue();
         }

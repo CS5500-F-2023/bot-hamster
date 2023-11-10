@@ -72,7 +72,7 @@ public class HealCommand implements SlashCommandHandler, StringSelectHandler {
         final String response = event.getInteraction().getValues().get(0);
         Objects.requireNonNull(response);
 
-        int coinBalance = trainerController.getCoinBalance(trainerDiscordId);
+        int coinBalance = trainerController.getCoinBalanceFromTrainer(trainerDiscordId);
         if (coinBalance <= 0) {
             event.reply(
                             String.format(
@@ -80,13 +80,13 @@ public class HealCommand implements SlashCommandHandler, StringSelectHandler {
                                     response, trainerDiscordId))
                     .queue();
         } else {
-            trainerController.updateCoinBalance(trainerDiscordId, -25);
+            trainerController.updateCoinBalanceForTrainer(trainerDiscordId, -25);
             event.reply(
                             String.format(
                                     "Pokemon %s has recovered! Player <@%s> current coin balance is %s.",
                                     response,
                                     trainerDiscordId,
-                                    trainerController.getCoinBalance(trainerDiscordId)))
+                                    trainerController.getCoinBalanceFromTrainer(trainerDiscordId)))
                     .queue();
 
             event.reply(response).queue();

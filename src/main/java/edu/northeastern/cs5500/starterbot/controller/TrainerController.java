@@ -1,11 +1,8 @@
 package edu.northeastern.cs5500.starterbot.controller;
 
-import edu.northeastern.cs5500.starterbot.model.InventoryItem;
-import edu.northeastern.cs5500.starterbot.model.InventoryItemType;
 import edu.northeastern.cs5500.starterbot.model.Pokemon;
 import edu.northeastern.cs5500.starterbot.model.Trainer;
 import edu.northeastern.cs5500.starterbot.repository.GenericRepository;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
@@ -39,12 +36,8 @@ public class TrainerController {
         trainer.setDiscordUserId(discordMemberId);
 
         // TODO: Modified the trainer's initial inventory items as needed.
-        InventoryItem initialPokeBall =
-                new InventoryItem(new ObjectId(), InventoryItemType.POKEBALL, 3);
-        InventoryItem initialCoinBalance =
-                new InventoryItem(new ObjectId(), InventoryItemType.COIN, 100);
-        trainer.getPokemonInventory().add(initialPokeBall);
-        trainer.getPokemonInventory().add(initialCoinBalance);
+        trainer.setPokeBallQuantity(3);
+        trainer.setCoinBalance(100);
 
         return trainerRepository.add(trainer);
     }
@@ -52,71 +45,43 @@ public class TrainerController {
     public void addPokemonToTrainer(String discordMemberId, String pokemonIdString) {
         ObjectId pokemonId = new ObjectId(pokemonIdString);
         Trainer trainer = getTrainerForMemberId(discordMemberId);
-        InventoryItem pokemon = new InventoryItem(pokemonId, InventoryItemType.POKEMON, 1);
-        trainer.getPokemonInventory().add(pokemon);
+        trainer.getPokemonInventory().add(pokemonId);
         trainerRepository.update(trainer);
     }
 
-    public void updatePokeBallToTrainer(String discordMemberId, int numOfPokeBall) {
+    public int getPokeBallQuantityFromTrainer(String discordMemberId) {
         Trainer trainer = getTrainerForMemberId(discordMemberId);
+        return trainer.getPokeBallQuantity();
+    }
 
-        for (InventoryItem item : trainer.getPokemonInventory()) {
-            if (item.getInventoryItemType() == InventoryItemType.POKEBALL) {
-                int newQuantity = item.getQuantity() + numOfPokeBall;
-                item.setQuantity(newQuantity);
-            }
-        }
+    public void updatePokeBallForTrainer(String discordMemberId, int numOfPokeBall) {
+        Trainer trainer = getTrainerForMemberId(discordMemberId);
+        int newPokeBallQuantity = trainer.getPokeBallQuantity() + numOfPokeBall;
+        trainer.setPokeBallQuantity(newPokeBallQuantity);
         trainerRepository.update(trainer);
     }
 
-    public int getPokeBallCount(String discordMemberId) {
+    public int getCoinBalanceFromTrainer(String discordMemberId) {
         Trainer trainer = getTrainerForMemberId(discordMemberId);
-
-        for (InventoryItem item : trainer.getPokemonInventory()) {
-            if (item.getInventoryItemType() == InventoryItemType.POKEBALL) {
-                return item.getQuantity();
-            }
-        }
-        return 0;
+        return trainer.getCoinBalance();
     }
 
-    public void updateCoinBalance(String discordMemberId, int numOfCoin) {
+    public void updateCoinBalanceForTrainer(String discordMemberId, int numOfCoin) {
         Trainer trainer = getTrainerForMemberId(discordMemberId);
-
-        for (InventoryItem item : trainer.getPokemonInventory()) {
-            if (item.getInventoryItemType() == InventoryItemType.COIN) {
-                int newQuantity = item.getQuantity() + numOfCoin;
-                item.setQuantity(newQuantity);
-            }
-        }
+        int newCoinQuantity = trainer.getCoinBalance() + numOfCoin;
+        trainer.setCoinBalance(newCoinQuantity);
         trainerRepository.update(trainer);
-    }
-
-    public int getCoinBalance(String discordMemberId) {
-        Trainer trainer = getTrainerForMemberId(discordMemberId);
-
-        for (InventoryItem item : trainer.getPokemonInventory()) {
-            if (item.getInventoryItemType() == InventoryItemType.COIN) {
-                return item.getQuantity();
-            }
-        }
-        return 0;
     }
 
     public Pokemon getRandomPokemonFromTrainer(String discordMemberId) {
         Trainer trainer = getTrainerForMemberId(discordMemberId);
-        List<InventoryItem> pokemonList = new ArrayList<>();
-        for (InventoryItem item : trainer.getPokemonInventory()) {
-            if (item.getInventoryItemType() == InventoryItemType.POKEMON) {
-                pokemonList.add(item);
-            }
-        }
+        List<ObjectId> pokemonList = trainer.getPokemonInventory();
 
         if (pokemonList.isEmpty()) {
             return null;
         } else {
             int randomIndex = random.nextInt(pokemonList.size());
-            String pokemonObjectId = pokemonList.get(randomIndex).getObjectId().toString();
+            String pokemonObjectId = pokemonList.get(randomIndex).toString();
             return pokemonController.getPokemonById(pokemonObjectId);
         }
     }
