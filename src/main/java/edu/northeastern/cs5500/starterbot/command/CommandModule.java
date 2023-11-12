@@ -92,4 +92,11 @@ public class CommandModule {
     public SlashCommandHandler provideSearchCommand(SearchCommand command) {
         return command;
     }
+
+    @Provides
+    @IntoMap
+    @StringKey(HomeCommand.NAME)
+    public SlashCommandHandler provideHomeCommand(HomeCommand command) {
+        return command;
+    }
 }
