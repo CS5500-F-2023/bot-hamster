@@ -48,6 +48,7 @@ public class HomeCommand implements SlashCommandHandler {
         log.info("event: /home");
 
         String trainerDiscordId = event.getMember().getId();
+        Trainer trainer = trainerController.getTrainerForMemberId(trainerDiscordId);
 
         // build UI
         EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -62,17 +63,22 @@ public class HomeCommand implements SlashCommandHandler {
                         + "\n\n"
                         + "**Balance** 💰"
                         + "\n"
-                        + String.format("%s Coins", trainerController.getCoinBalanceFromTrainer(trainerDiscordId))
+                        + String.format(
+                                "%s Coins",
+                                trainerController.getCoinBalanceFromTrainer(trainerDiscordId))
                         + "\n\n"
                         + "**PokeBall** 🪩"
                         + "\n"
                         + String.format(
-                                "%s Balls", trainerController.getPokeBallQuantityFromTrainer(trainerDiscordId)));
+                                "%s Balls",
+                                trainerController.getPokeBallQuantityFromTrainer(
+                                        trainerDiscordId)));
         event.replyEmbeds(embedBuilder.build()).queue();
     }
 
     /**
      * Generate a list of Pokemon names from the inventory of a Trainer as String.
+     *
      * @param trainer The trainer whose inventory is to be processed.
      * @return A string representing the names of the Pokemon in the trainer's inventory.
      */
