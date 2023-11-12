@@ -95,13 +95,6 @@ public class CommandModule {
 
     @Provides
     @IntoMap
-    @StringKey(SearchCommand.NAME)
-    public SlashCommandHandler provideSearchCommand(SearchCommand command) {
-        return command;
-    }
-
-    @Provides
-    @IntoMap
     @StringKey(HomeCommand.NAME)
     public SlashCommandHandler provideHomeCommand(HomeCommand command) {
         return command;
