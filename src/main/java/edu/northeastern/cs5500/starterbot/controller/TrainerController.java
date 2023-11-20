@@ -5,9 +5,8 @@ import edu.northeastern.cs5500.starterbot.model.Trainer;
 import edu.northeastern.cs5500.starterbot.repository.GenericRepository;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
+import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,13 +17,19 @@ public class TrainerController {
     GenericRepository<Trainer> trainerRepository;
 
     private Random random = new Random();
+
     PokemonController pokemonController;
+
+    PokedexController pokedexController;
 
     @Inject
     TrainerController(
-            GenericRepository<Trainer> trainerRepository, PokemonController pokemonController) {
+            GenericRepository<Trainer> trainerRepository,
+            PokemonController pokemonController,
+            PokedexController pokedexController) {
         this.trainerRepository = trainerRepository;
         this.pokemonController = pokemonController;
+        this.pokedexController = pokedexController;
     }
 
     @Nonnull
@@ -44,11 +49,10 @@ public class TrainerController {
         return trainerRepository.add(trainer);
     }
 
-    public Trainer addPokemonToTrainer(
-            String discordMemberId, String pokemonName, String pokemonIdString) {
+    public Trainer addPokemonToTrainer(String discordMemberId, String pokemonIdString) {
         ObjectId pokemonId = new ObjectId(pokemonIdString);
         Trainer trainer = getTrainerForMemberId(discordMemberId);
-        trainer.getPokemonInventory().put(pokemonName, pokemonId);
+        trainer.getPokemonInventory().add(pokemonId);
         return trainerRepository.update(trainer);
     }
 
@@ -61,7 +65,7 @@ public class TrainerController {
     }
 
     public void removePokemonFromTrainer(@Nonnull Trainer trainer, @Nonnull Pokemon pokemon) {
-        if (!trainer.getPokemonInventory().containsValue(pokemon.getId())) {
+        if (!trainer.getPokemonInventory().contains(pokemon.getId())) {
             throw new IllegalStateException(
                     "Cannot remove a Pokemon that is not in the user's inventory");
         }
@@ -99,32 +103,55 @@ public class TrainerController {
 
     public Pokemon getRandomPokemonFromTrainer(String discordMemberId) {
         Trainer trainer = getTrainerForMemberId(discordMemberId);
-        Map<String, ObjectId> pokemonInventory = trainer.getPokemonInventory();
+        List<ObjectId> pokemonList = trainer.getPokemonInventory();
 
-        if (!pokemonInventory.isEmpty()) {
-            ObjectId randomPokemonId =
-                    new ArrayList<>(pokemonInventory.values())
-                            .get(random.nextInt(pokemonInventory.size()));
-            return pokemonController.getPokemonById(randomPokemonId.toString());
+        if (pokemonList.isEmpty()) {
+            return null;
+        } else {
+            int randomIndex = random.nextInt(pokemonList.size());
+            String pokemonObjectId = pokemonList.get(randomIndex).toString();
+            return pokemonController.getPokemonById(pokemonObjectId);
+        }
+    }
+
+    public List<String> getPokemonNamesFromTrainerInventory(String discordMemberId) {
+        Trainer trainer = getTrainerForMemberId(discordMemberId);
+        List<String> pokemonNames = new ArrayList<>();
+
+        for (ObjectId pokemonId : trainer.getPokemonInventory()) {
+            Pokemon pokemon = pokemonController.getPokemonById(pokemonId.toString());
+            int pokedexNum = pokemon.getPokedexNumber();
+            String pokemonName = pokedexController.getPokemonSpeciesByNumber(pokedexNum).getName();
+            pokemonNames.add(pokemonName);
+        }
+
+        return pokemonNames;
+    }
+
+    public ObjectId getPokemonIdByPokemonName(String discordMemberId, String name) {
+        Trainer trainer = getTrainerForMemberId(discordMemberId);
+
+        for (ObjectId pokemonId : trainer.getPokemonInventory()) {
+            Pokemon pokemon = pokemonController.getPokemonById(pokemonId.toString());
+            int pokedexNum = pokemon.getPokedexNumber();
+            String pokemonName = pokedexController.getPokemonSpeciesByNumber(pokedexNum).getName();
+
+            if (name.equals(pokemonName)) {
+                return pokemonId;
+            }
         }
         return null;
     }
 
-    public Set<String> getPokemonNameFromTrainerInventory(String discordMemberId) {
+    public void updatePokemonStatsForTrainer(String discordMemberId, String name, int plusOrMinus) {
         Trainer trainer = getTrainerForMemberId(discordMemberId);
-        return trainer.getPokemonInventory().keySet();
-    }
 
-    public void updatePokemonStatsForTrainer(
-            String discordMemberId, String pokemonName, int plusOrMinus) {
-        Trainer trainer = getTrainerForMemberId(discordMemberId);
-        Map<String, ObjectId> pokemonInventory = trainer.getPokemonInventory();
+        for (ObjectId pokemonId : trainer.getPokemonInventory()) {
+            Pokemon pokemon = pokemonController.getPokemonById(pokemonId.toString());
+            int pokedexNum = pokemon.getPokedexNumber();
+            String pokemonName = pokedexController.getPokemonSpeciesByNumber(pokedexNum).getName();
 
-        for (String name : pokemonInventory.keySet()) {
             if (name.equals(pokemonName)) {
-                ObjectId pokemonId = pokemonInventory.get(name);
-                Pokemon pokemon = pokemonController.getPokemonById(pokemonId.toString());
-
                 int halfPokemonHP = (int) (pokemon.getHp() / 2.0) * plusOrMinus;
                 int newPokemonHP = pokemon.getHp() + halfPokemonHP;
                 int newPokemonTotal = pokemon.getTotal() + halfPokemonHP;

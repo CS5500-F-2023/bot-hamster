@@ -4,6 +4,8 @@ import edu.northeastern.cs5500.starterbot.model.Pokemon;
 import edu.northeastern.cs5500.starterbot.model.TradeOffer;
 import edu.northeastern.cs5500.starterbot.model.Trainer;
 import edu.northeastern.cs5500.starterbot.repository.GenericRepository;
+import java.io.IOException;
+import java.io.InputStream;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -33,27 +35,27 @@ public class TradeOfferController {
         return tradeOfferRepository.add(tradeOffer);
     }
 
-    // public void acceptOffer(TradeOffer tradeOffer) {
-    //     TradeOffer parentOffer = tradeOfferRepository.get(tradeOffer.getParent());
+    public void acceptOffer(TradeOffer tradeOffer) {
+        TradeOffer parentOffer = tradeOfferRepository.get(tradeOffer.getParent());
 
-    //     Trainer parentTrainer = trainerController.getTrainerForId(parentOffer.getTrainerId());
-    //     Trainer otherTrainer = trainerController.getTrainerForId(tradeOffer.getTrainerId());
+        Trainer parentTrainer = trainerController.getTrainerForId(parentOffer.getTrainerId());
+        Trainer otherTrainer = trainerController.getTrainerForId(tradeOffer.getTrainerId());
 
-    //     trainerController.addPokemonToTrainer(
-    //             parentTrainer.getDiscordUserId(), tradeOffer.getPokemonId().toString());
-    //     trainerController.addPokemonToTrainer(
-    //             otherTrainer.getDiscordUserId(), parentOffer.getPokemonId().toString());
+        trainerController.addPokemonToTrainer(
+                parentTrainer.getDiscordUserId(), tradeOffer.getPokemonId().toString());
+        trainerController.addPokemonToTrainer(
+                otherTrainer.getDiscordUserId(), parentOffer.getPokemonId().toString());
 
-    //     tradeOfferRepository.delete(tradeOffer.getId());
-    //     tradeOfferRepository.delete(parentOffer.getId());
-    // }
+        tradeOfferRepository.delete(tradeOffer.getId());
+        tradeOfferRepository.delete(parentOffer.getId());
+    }
 
-    // public int getResources() {
-    //     InputStream stream = this.getClass().getResourceAsStream("/pokemon.json");
-    //     try {
-    //         return stream.readAllBytes().length;
-    //     } catch (IOException e) {
-    //         throw new IllegalStateException(e);
-    //     }
-    // }
+    public int getResources() {
+        InputStream stream = this.getClass().getResourceAsStream("/pokemon.json");
+        try {
+            return stream.readAllBytes().length;
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }

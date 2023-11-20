@@ -1,7 +1,7 @@
 package edu.northeastern.cs5500.starterbot.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 import org.bson.types.ObjectId;
 
@@ -17,5 +17,5 @@ public class Trainer implements Model {
 
     int coinBalance;
 
-    Map<String, ObjectId> pokemonInventory = new HashMap<>();
+    List<ObjectId> pokemonInventory = new ArrayList<>();
 }

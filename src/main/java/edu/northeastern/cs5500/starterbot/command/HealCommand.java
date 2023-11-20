@@ -57,7 +57,7 @@ public class HealCommand implements SlashCommandHandler, StringSelectHandler {
 
         String trainerDiscordId = event.getMember().getId();
         Collection<String> pokemonList =
-                trainerController.getPokemonNameFromTrainerInventory(trainerDiscordId);
+                trainerController.getPokemonNamesFromTrainerInventory(trainerDiscordId);
 
         StringSelectMenu.Builder menu =
                 StringSelectMenu.create(NAME).setPlaceholder("Choose Pokemon");
@@ -90,10 +90,7 @@ public class HealCommand implements SlashCommandHandler, StringSelectHandler {
             trainerController.updateCoinBalanceForTrainer(trainerDiscordId, -25);
             trainerController.updatePokemonStatsForTrainer(trainerDiscordId, response, +1);
             ObjectId pokemonId =
-                    trainerController
-                            .getTrainerForMemberId(trainerDiscordId)
-                            .getPokemonInventory()
-                            .get(response);
+                    trainerController.getPokemonIdByPokemonName(trainerDiscordId, response);
             Pokemon pokemon = pokemonController.getPokemonById(pokemonId.toString());
             event.reply(
                             String.format(

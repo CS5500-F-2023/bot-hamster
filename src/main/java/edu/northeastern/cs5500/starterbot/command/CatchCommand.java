@@ -99,7 +99,7 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
                                     species.getName(), trainerDiscordId))
                     .queue();
         } else {
-            trainerController.addPokemonToTrainer(trainerDiscordId, species.getName(), pokemonId);
+            trainerController.addPokemonToTrainer(trainerDiscordId, pokemonId);
             trainerController.updatePokeBallForTrainer(trainerDiscordId, -1);
             event.reply(
                             String.format(
@@ -118,8 +118,7 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
         Pokemon randomPokemon = trainerController.getRandomPokemonFromTrainer(trainerDiscordId);
         if (randomPokemon != null) {
             if (randomPokemon.getTotal() > pokemonStatsTotal) {
-                trainerController.addPokemonToTrainer(
-                        trainerDiscordId, species.getName(), pokemonId);
+                trainerController.addPokemonToTrainer(trainerDiscordId, pokemonId);
                 event.reply(
                                 String.format(
                                         "Congratulations! Pokemon %s surrendered to player <@%s>!",

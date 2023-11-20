@@ -56,7 +56,7 @@ public class TradeCommand implements SlashCommandHandler, StringSelectHandler {
 
         String trainerDiscordId = event.getMember().getId();
         Collection<String> pokemonList =
-                trainerController.getPokemonNameFromTrainerInventory(trainerDiscordId);
+                trainerController.getPokemonNamesFromTrainerInventory(trainerDiscordId);
 
         StringSelectMenu.Builder menu =
                 StringSelectMenu.create(NAME).setPlaceholder("Choose Pokemon");
