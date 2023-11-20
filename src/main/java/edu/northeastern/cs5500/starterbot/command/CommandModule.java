@@ -99,4 +99,18 @@ public class CommandModule {
     public SlashCommandHandler provideHomeCommand(HomeCommand command) {
         return command;
     }
+
+    @Provides
+    @IntoMap
+    @StringKey(TradeCommand.NAME)
+    public SlashCommandHandler provideTradeCommand(TradeCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey(TradeCommand.NAME)
+    public StringSelectHandler provideTradeCommandMenuHandler(TradeCommand dropdownCommand) {
+        return dropdownCommand;
+    }
 }

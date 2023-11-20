@@ -41,8 +41,7 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
     @Override
     @Nonnull
     public CommandData getCommandData() {
-        // TODO: Modify the message
-        return Commands.slash(getName(), "Catch a random Pokemon in wild");
+        return Commands.slash(getName(), "Catch - Catch a wild Pokemon");
     }
 
     @Override
@@ -55,33 +54,7 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
         // build UI
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(String.format("A wild %s appears!", species.getName()));
-
-        // TODO: Adjust UI design if necessary
-        embedBuilder.setDescription(
-                "**Level**: "
-                        + Integer.toString(pokemon.getLevel())
-                        + "\n"
-                        + "**HP: **"
-                        + Integer.toString(pokemon.getHp())
-                        + "\n"
-                        + "**Attack: **"
-                        + Integer.toString(pokemon.getAttack())
-                        + "\n"
-                        + "**Defense: **"
-                        + Integer.toString(pokemon.getDefense())
-                        + "\n"
-                        + "**SpecialAttack: **"
-                        + Integer.toString(pokemon.getSpecialAttack())
-                        + "\n"
-                        + "**SpecialDefense: **"
-                        + Integer.toString(pokemon.getSpecialDefense())
-                        + "\n"
-                        + "**Speed: **"
-                        + Integer.toString(pokemon.getSpeed())
-                        + "\n"
-                        + "**Total: **"
-                        + Integer.toString(pokemon.getTotal()));
-
+        embedBuilder.setDescription("Catch Pokemon with 1 Pokeball or Fight until You Win!");
         embedBuilder.setThumbnail(species.getImageUrl());
 
         MessageCreateBuilder messageCreateBuilder = new MessageCreateBuilder();
@@ -126,7 +99,7 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
                                     species.getName(), trainerDiscordId))
                     .queue();
         } else {
-            trainerController.addPokemonToTrainer(trainerDiscordId, pokemonId);
+            trainerController.addPokemonToTrainer(trainerDiscordId, species.getName(), pokemonId);
             trainerController.updatePokeBallForTrainer(trainerDiscordId, -1);
             event.reply(
                             String.format(
@@ -145,7 +118,8 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
         Pokemon randomPokemon = trainerController.getRandomPokemonFromTrainer(trainerDiscordId);
         if (randomPokemon != null) {
             if (randomPokemon.getTotal() > pokemonStatsTotal) {
-                trainerController.addPokemonToTrainer(trainerDiscordId, pokemonId);
+                trainerController.addPokemonToTrainer(
+                        trainerDiscordId, species.getName(), pokemonId);
                 event.reply(
                                 String.format(
                                         "Congratulations! Pokemon %s surrendered to player <@%s>!",
@@ -158,10 +132,7 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
                                         trainerDiscordId, species.getName()))
                         .queue();
             } else {
-                event.reply(
-                                String.format(
-                                        "Tie! Fight Pokemon %s again!",
-                                        trainerDiscordId, species.getName()))
+                event.reply(String.format("Tie! Fight Pokemon %s again!", species.getName()))
                         .queue();
             }
         } else {

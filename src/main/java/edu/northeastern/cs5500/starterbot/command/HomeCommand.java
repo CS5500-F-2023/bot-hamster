@@ -84,7 +84,7 @@ public class HomeCommand implements SlashCommandHandler {
      */
     private String getPokemonListAsString(Trainer trainer) {
         List<String> pokemonList = new ArrayList<>();
-        for (ObjectId pokemonId : trainer.getPokemonInventory()) {
+        for (ObjectId pokemonId : trainer.getPokemonInventory().values()) {
             Integer pokedexNum =
                     pokemonController.getPokemonByObjectId(pokemonId).getPokedexNumber();
             String pokemonName = pokedexController.getPokemonSpeciesByNumber(pokedexNum).getName();

@@ -4,6 +4,7 @@ import edu.northeastern.cs5500.starterbot.model.Pokemon;
 import edu.northeastern.cs5500.starterbot.model.Pokemon.PokemonBuilder;
 import edu.northeastern.cs5500.starterbot.repository.GenericRepository;
 import java.util.Objects;
+import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -14,8 +15,7 @@ public class PokemonController {
 
     GenericRepository<Pokemon> pokemonRepository;
 
-    // TODO: uncomment out the code below to implement pokemon randomly
-    // private Random random = new Random();
+    private Random random = new Random();
 
     @Inject
     PokemonController(GenericRepository<Pokemon> pokemonRepository) {
@@ -42,7 +42,9 @@ public class PokemonController {
                 builder.speed(9);
                 builder.total(68);
                 break;
-            case 4:
+            case 2:
+                // case 4:
+                // temporary comment out to implement random
                 builder.hp(18);
                 builder.attack(18);
                 builder.defense(9);
@@ -51,7 +53,9 @@ public class PokemonController {
                 builder.speed(11);
                 builder.total(77);
                 break;
-            case 7:
+            case 3:
+                // case 7:
+                // temporary comment out to implement random
                 builder.hp(19);
                 builder.attack(9);
                 builder.defense(9);
@@ -60,7 +64,9 @@ public class PokemonController {
                 builder.speed(9);
                 builder.total(77);
                 break;
-            case 19:
+            case 4:
+                // case 19:
+                // temporary comment out to implement random
                 builder.hp(18);
                 builder.attack(10);
                 builder.defense(8);
@@ -78,11 +84,9 @@ public class PokemonController {
     }
 
     public Pokemon catchRandomPokemon() {
-        // Chosen randomly
-
-        // TODO: select pokemon randomly (after setting up the database)
-        return catchPokemon(1);
-        // return catchPokemon(random.nextInt(20) + 1);
+        // TODO: Modify the random index based on the catchPokemon method or the Pokemon data
+        // resource file.
+        return catchPokemon(random.nextInt(4) + 1);
     }
 
     public Pokemon getPokemonById(String pokemonId) {
@@ -95,5 +99,12 @@ public class PokemonController {
 
     public Pokemon searchPokemonByPokedexNumber(int pokedexNumber) {
         return catchPokemon(pokedexNumber);
+    }
+
+    public void updatePokemon(Pokemon pokemon) {
+        Pokemon existingPokemon = getPokemonById(pokemon.getId().toString());
+        existingPokemon.setHp(pokemon.getHp());
+        existingPokemon.setTotal(pokemon.getTotal());
+        pokemonRepository.update(existingPokemon);
     }
 }
