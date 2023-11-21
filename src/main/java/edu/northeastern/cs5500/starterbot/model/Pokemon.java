@@ -31,4 +31,6 @@ public class Pokemon implements Model {
     @Nonnull Integer speed;
 
     @Nonnull Integer total;
+
+    public Pokemon() {}
 }

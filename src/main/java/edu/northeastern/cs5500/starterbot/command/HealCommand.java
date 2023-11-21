@@ -3,6 +3,8 @@ package edu.northeastern.cs5500.starterbot.command;
 import edu.northeastern.cs5500.starterbot.controller.PokedexController;
 import edu.northeastern.cs5500.starterbot.controller.PokemonController;
 import edu.northeastern.cs5500.starterbot.controller.TrainerController;
+import edu.northeastern.cs5500.starterbot.model.Pokemon;
+import java.util.Collection;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -13,6 +15,7 @@ import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionE
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
+import org.bson.types.ObjectId;
 
 @Slf4j
 public class HealCommand implements SlashCommandHandler, StringSelectHandler {
@@ -52,18 +55,21 @@ public class HealCommand implements SlashCommandHandler, StringSelectHandler {
         embedBuilder.setImage(
                 "https://attackofthefanboy.com/256x256/wp-content/uploads/2016/07/Pokemon-Go-How-to-heal-and-revive.jpg");
 
-        StringSelectMenu menu =
-                StringSelectMenu.create(NAME)
-                        .setPlaceholder(
-                                "Choose Pokemon") // shows the placeholder indicating what this
+        String trainerDiscordId = event.getMember().getId();
+        Collection<String> pokemonList =
+                trainerController.getPokemonNamesFromTrainerInventory(trainerDiscordId);
 
-                        // TODO: Iterate through trainer's pokemon collections to provide user
-                        // pokemon selections.
-                        .addOption("Pokemon1", "pokemon1")
-                        .addOption("Pokemon2", "pokemon2")
-                        .addOption("Pokemon3", "pokemon3")
-                        .build();
-        event.replyEmbeds(embedBuilder.build()).addActionRow(menu).setEphemeral(false).queue();
+        StringSelectMenu.Builder menu =
+                StringSelectMenu.create(NAME).setPlaceholder("Choose Pokemon");
+
+        for (String pokemon : pokemonList) {
+            menu.addOption(pokemon, pokemon);
+        }
+
+        event.replyEmbeds(embedBuilder.build())
+                .addActionRow(menu.build())
+                .setEphemeral(false)
+                .queue();
     }
 
     @Override
@@ -73,6 +79,7 @@ public class HealCommand implements SlashCommandHandler, StringSelectHandler {
         Objects.requireNonNull(response);
 
         int coinBalance = trainerController.getCoinBalanceFromTrainer(trainerDiscordId);
+
         if (coinBalance <= 0) {
             event.reply(
                             String.format(
@@ -81,10 +88,16 @@ public class HealCommand implements SlashCommandHandler, StringSelectHandler {
                     .queue();
         } else {
             trainerController.updateCoinBalanceForTrainer(trainerDiscordId, -25);
+            trainerController.updatePokemonStatsForTrainer(trainerDiscordId, response, +1);
+            ObjectId pokemonId =
+                    trainerController.getPokemonIdByPokemonName(trainerDiscordId, response);
+            Pokemon pokemon = pokemonController.getPokemonById(pokemonId.toString());
             event.reply(
                             String.format(
-                                    "Pokemon %s has recovered! Player <@%s> current coin balance is %s.",
+                                    "Pokemon %s has recovered to hp = %s and total stats = %s! Player <@%s> current coin balance is %s.",
                                     response,
+                                    pokemon.getHp(),
+                                    pokemon.getTotal(),
                                     trainerDiscordId,
                                     trainerController.getCoinBalanceFromTrainer(trainerDiscordId)))
                     .queue();

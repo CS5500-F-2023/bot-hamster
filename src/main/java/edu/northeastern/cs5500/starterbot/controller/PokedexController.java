@@ -25,17 +25,23 @@ public class PokedexController {
                 builder.types(PokemonType.getSingleTypeArray(PokemonType.GRASS));
                 builder.imageUrl("https://placehold.co/256x256/green/white.png?text=Bulbasaur");
                 break;
-            case 4:
+            case 2:
+                // case 4:
+                // temporary comment out to implement random
                 builder.name("Charmander");
                 builder.types(PokemonType.getSingleTypeArray(PokemonType.FIRE));
                 builder.imageUrl("https://placehold.co/256x256/red/white.png?text=Charmander");
                 break;
-            case 7:
+            case 3:
+                // case 7:
+                // temporary comment out to implement random
                 builder.name("Squirtle");
                 builder.types(PokemonType.getSingleTypeArray(PokemonType.WATER));
                 builder.imageUrl("https://placehold.co/256x256/blue/white.png?text=Squirtle");
                 break;
-            case 19:
+            case 4:
+                // case 19:
+                // temporary comment out to implement random
                 builder.name("Rattata");
                 builder.types(PokemonType.getSingleTypeArray(PokemonType.NORMAL));
                 builder.imageUrl("https://placehold.co/256x256.png?text=Rattata");
