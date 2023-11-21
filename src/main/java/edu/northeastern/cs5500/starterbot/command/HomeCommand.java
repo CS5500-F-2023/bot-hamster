@@ -19,7 +19,6 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
-
 import org.bson.types.ObjectId;
 
 @Slf4j
@@ -78,7 +77,7 @@ public class HomeCommand implements SlashCommandHandler, ButtonHandler {
                                 "%s Balls",
                                 trainerController.getPokeBallQuantityFromTrainer(
                                         trainerDiscordId)));
-        
+
         // Build Button
         MessageCreateBuilder messageCreateBuilder = new MessageCreateBuilder();
         messageCreateBuilder.addActionRow(Button.primary(getName() + ":stats", "🔍 Show Stats"));
@@ -98,16 +97,17 @@ public class HomeCommand implements SlashCommandHandler, ButtonHandler {
     private void statsButton(@Nonnull ButtonInteractionEvent event, Trainer trainer) {
         // Acknowledge the interaction and prepare to send a response
         event.deferReply().queue();
-    
+
         List<MessageEmbed> embeds = new ArrayList<>();
         for (ObjectId objectId : trainer.getPokemonInventory()) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             Pokemon pokemon = pokemonController.getPokemonByObjectId(objectId);
-            PokemonSpecies species = pokedexController.getPokemonSpeciesByNumber(pokemon.getPokedexNumber());
+            PokemonSpecies species =
+                    pokedexController.getPokemonSpeciesByNumber(pokemon.getPokedexNumber());
             getPokemonStats(pokemon, species, embedBuilder);
             embeds.add(embedBuilder.build());
         }
-    
+
         // Check if there are embeds to send
         if (!embeds.isEmpty()) {
             event.getHook().sendMessageEmbeds(embeds).queue();
@@ -116,7 +116,8 @@ public class HomeCommand implements SlashCommandHandler, ButtonHandler {
         }
     }
 
-    private void getPokemonStats(Pokemon pokemon, PokemonSpecies species, EmbedBuilder embedBuilder) {
+    private void getPokemonStats(
+            Pokemon pokemon, PokemonSpecies species, EmbedBuilder embedBuilder) {
         embedBuilder.setTitle(String.format("%s", species.getName()));
         embedBuilder.setThumbnail(species.getImageUrl());
         embedBuilder.setDescription(
