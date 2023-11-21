@@ -96,7 +96,14 @@ public class CommandModule {
     @Provides
     @IntoMap
     @StringKey(HomeCommand.NAME)
-    public SlashCommandHandler provideHomeCommand(HomeCommand command) {
+    public SlashCommandHandler provideHomeButtonHandler(HomeCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey(HomeCommand.NAME)
+    public ButtonHandler provideHomeCommand(HomeCommand command) {
         return command;
     }
 

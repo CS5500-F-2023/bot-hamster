@@ -1,8 +1,11 @@
 package edu.northeastern.cs5500.starterbot.controller;
 
 import edu.northeastern.cs5500.starterbot.model.Pokemon;
+import edu.northeastern.cs5500.starterbot.model.PokemonSpecies;
 import edu.northeastern.cs5500.starterbot.model.Pokemon.PokemonBuilder;
 import edu.northeastern.cs5500.starterbot.repository.GenericRepository;
+import net.dv8tion.jda.api.EmbedBuilder;
+
 import java.util.Objects;
 import java.util.Random;
 import javax.annotation.Nonnull;
@@ -107,4 +110,5 @@ public class PokemonController {
         existingPokemon.setTotal(pokemon.getTotal());
         pokemonRepository.update(existingPokemon);
     }
+
 }
