@@ -102,6 +102,13 @@ public class CommandModule {
 
     @Provides
     @IntoMap
+    @StringKey(HomeCommand.NAME)
+    public ButtonHandler provideHomeCommandprovideHomeButtonHandler(HomeCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
     @StringKey(TradeCommand.NAME)
     public SlashCommandHandler provideTradeCommand(TradeCommand command) {
         return command;

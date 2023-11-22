@@ -3,6 +3,8 @@ package edu.northeastern.cs5500.starterbot.command;
 import edu.northeastern.cs5500.starterbot.controller.PokedexController;
 import edu.northeastern.cs5500.starterbot.controller.PokemonController;
 import edu.northeastern.cs5500.starterbot.controller.TrainerController;
+import edu.northeastern.cs5500.starterbot.model.Pokemon;
+import edu.northeastern.cs5500.starterbot.model.PokemonSpecies;
 import edu.northeastern.cs5500.starterbot.model.Trainer;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +12,17 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.bson.types.ObjectId;
 
 @Slf4j
-public class HomeCommand implements SlashCommandHandler {
+public class HomeCommand implements SlashCommandHandler, ButtonHandler {
 
     static final String NAME = "home";
 
@@ -50,10 +56,8 @@ public class HomeCommand implements SlashCommandHandler {
         String trainerDiscordId = event.getMember().getId();
         Trainer trainer = trainerController.getTrainerForMemberId(trainerDiscordId);
 
-        // build UI
+        // Build UI
         EmbedBuilder embedBuilder = new EmbedBuilder();
-
-        // UI design
         embedBuilder.setDescription(
                 String.format("**Hey <@%s>! Welcome to your inventory** 🏠", trainerDiscordId)
                         + "\n\n"
@@ -73,7 +77,73 @@ public class HomeCommand implements SlashCommandHandler {
                                 "%s Balls",
                                 trainerController.getPokeBallQuantityFromTrainer(
                                         trainerDiscordId)));
-        event.replyEmbeds(embedBuilder.build()).queue();
+
+        // Build Button
+        MessageCreateBuilder messageCreateBuilder = new MessageCreateBuilder();
+        messageCreateBuilder.addActionRow(Button.primary(getName() + ":stats", "🔍 Show Stats"));
+        messageCreateBuilder = messageCreateBuilder.addEmbeds(embedBuilder.build());
+        event.reply(messageCreateBuilder.build()).queue();
+    }
+
+    @Override
+    public void onButtonInteraction(@Nonnull ButtonInteractionEvent event) {
+        String trainerDiscordId = event.getMember().getId();
+        Trainer trainer = trainerController.getTrainerForMemberId(trainerDiscordId);
+        if (event.getButton().getId().startsWith(getName() + ":stats")) {
+            statsButton(event, trainer);
+        }
+    }
+
+    private void statsButton(@Nonnull ButtonInteractionEvent event, Trainer trainer) {
+        // Acknowledge the interaction and prepare to send a response
+        event.deferReply().queue();
+
+        List<MessageEmbed> embeds = new ArrayList<>();
+        for (ObjectId objectId : trainer.getPokemonInventory()) {
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            Pokemon pokemon = pokemonController.getPokemonByObjectId(objectId);
+            PokemonSpecies species =
+                    pokedexController.getPokemonSpeciesByNumber(pokemon.getPokedexNumber());
+            getPokemonStats(pokemon, species, embedBuilder);
+            embeds.add(embedBuilder.build());
+        }
+
+        // Check if there are embeds to send
+        if (!embeds.isEmpty()) {
+            event.getHook().sendMessageEmbeds(embeds).queue();
+        } else {
+            event.getHook().sendMessage("No Pokemon in your team!").queue();
+        }
+    }
+
+    private void getPokemonStats(
+            Pokemon pokemon, PokemonSpecies species, EmbedBuilder embedBuilder) {
+        embedBuilder.setTitle(String.format("%s", species.getName()));
+        embedBuilder.setThumbnail(species.getImageUrl());
+        embedBuilder.setDescription(
+                "**Level**: "
+                        + Integer.toString(pokemon.getLevel())
+                        + "\n"
+                        + "**HP: **"
+                        + Integer.toString(pokemon.getHp())
+                        + "\n"
+                        + "**Attack: **"
+                        + Integer.toString(pokemon.getAttack())
+                        + "\n"
+                        + "**Defense: **"
+                        + Integer.toString(pokemon.getDefense())
+                        + "\n"
+                        + "**SpecialAttack: **"
+                        + Integer.toString(pokemon.getSpecialAttack())
+                        + "\n"
+                        + "**SpecialDefense: **"
+                        + Integer.toString(pokemon.getSpecialDefense())
+                        + "\n"
+                        + "**Speed: **"
+                        + Integer.toString(pokemon.getSpeed())
+                        + "\n"
+                        + "**Total: **"
+                        + Integer.toString(pokemon.getTotal()));
     }
 
     /**
