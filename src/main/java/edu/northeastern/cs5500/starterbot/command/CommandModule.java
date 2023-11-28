@@ -120,4 +120,11 @@ public class CommandModule {
     public StringSelectHandler provideTradeCommandMenuHandler(TradeCommand dropdownCommand) {
         return dropdownCommand;
     }
+
+    @Provides
+    @IntoMap
+    @StringKey(RulesCommand.NAME)
+    public SlashCommandHandler provideRulesCommand(RulesCommand command) {
+        return command;
+    }
 }
