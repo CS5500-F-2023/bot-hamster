@@ -141,4 +141,25 @@ public class CommandModule {
     public StringSelectHandler provideSellCommandMenuHandler(SellCommand dropdownCommand) {
         return dropdownCommand;
     }
+
+    @Provides
+    @IntoMap
+    @StringKey(ShopCommand.NAME)
+    public SlashCommandHandler provideShopCommand(ShopCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey(ShopCommand.NAME)
+    public StringSelectHandler provideShopCommandMenuHandler(ShopCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey(ShopCommand.NAME)
+    public ButtonHandler provideShopCommandClickHandler(ShopCommand command) {
+        return command;
+    }
 }
