@@ -127,4 +127,18 @@ public class CommandModule {
     public SlashCommandHandler provideRulesCommand(RulesCommand command) {
         return command;
     }
+
+    @Provides
+    @IntoMap
+    @StringKey(SellCommand.NAME)
+    public SlashCommandHandler provideSellCommand(SellCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey(SellCommand.NAME)
+    public StringSelectHandler provideSellCommandMenuHandler(SellCommand dropdownCommand) {
+        return dropdownCommand;
+    }
 }
