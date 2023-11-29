@@ -85,6 +85,14 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
         }
     }
 
+    /**
+     * Handles the button interaction when the "Catch" button is clicked by a user.
+     *
+     * @param event The ButtonInteractionEvent triggered by the user clicking the "Catch" button.
+     * @param trainerDiscordId The Discord ID of the trainer initiating the interaction.
+     * @param pokemonId The ID of the wild Pokémon.
+     * @param species The PokemonSpecies object representing the species of the wild Pokemon.
+     */
     private void catchButton(
             @Nonnull ButtonInteractionEvent event,
             String trainerDiscordId,
@@ -98,6 +106,13 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
                                     "Pokemon %s run away! Player <@%s> has no PokeBall.",
                                     species.getName(), trainerDiscordId))
                     .queue();
+        } else if (trainerController.getPokemonIdByPokemonName(trainerDiscordId, species.getName())
+                != null) {
+            event.reply(
+                            String.format(
+                                    "Pokemon %s already in the inventory! Try again!",
+                                    species.getName(), trainerDiscordId))
+                    .queue();
         } else {
             trainerController.addPokemonToTrainer(trainerDiscordId, pokemonId);
             trainerController.updatePokeBallForTrainer(trainerDiscordId, -1);
@@ -109,6 +124,15 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
         }
     }
 
+    /**
+     * Handles the button interaction when the "Fight" button is clicked by a user.
+     *
+     * @param event The ButtonInteractionEvent triggered by the user clicking the "Fight" button.
+     * @param trainerDiscordId The Discord ID of the trainer initiating the interaction.
+     * @param pokemonId The ID of the wild Pokemon.
+     * @param species The PokémonSpecies object representing the species of the wild Pokemon.
+     * @param pokemonStatsTotal The total stats of the wild Pokemon.
+     */
     private void fightButton(
             @Nonnull ButtonInteractionEvent event,
             String trainerDiscordId,
@@ -116,7 +140,14 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
             PokemonSpecies species,
             int pokemonStatsTotal) {
         Pokemon randomPokemon = trainerController.getRandomPokemonFromTrainer(trainerDiscordId);
-        if (randomPokemon != null) {
+        if (trainerController.getPokemonIdByPokemonName(trainerDiscordId, species.getName())
+                != null) {
+            event.reply(
+                            String.format(
+                                    "Pokemon %s already in the inventory! Try again!",
+                                    species.getName(), trainerDiscordId))
+                    .queue();
+        } else if (randomPokemon != null) {
             if (randomPokemon.getTotal() > pokemonStatsTotal) {
                 trainerController.addPokemonToTrainer(trainerDiscordId, pokemonId);
                 event.reply(

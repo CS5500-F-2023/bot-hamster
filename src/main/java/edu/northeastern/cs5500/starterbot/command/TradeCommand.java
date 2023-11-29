@@ -50,25 +50,31 @@ public class TradeCommand implements SlashCommandHandler, StringSelectHandler {
         log.info("event: /trade");
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle("Trade Pokemon with Friend!");
-        embedBuilder.setDescription("Give away your Pokemon pika pika~~");
+        embedBuilder.setTitle("Trade Pokemon with Friend pika pika!");
+        embedBuilder.setDescription("Choose a Pokemon from your inventory to trade");
         embedBuilder.setImage("http://media3.giphy.com/media/Zqy8kRlwfwFnq/giphy.gif");
 
         String trainerDiscordId = event.getMember().getId();
         Collection<String> pokemonList =
                 trainerController.getPokemonNamesFromTrainerInventory(trainerDiscordId);
 
-        StringSelectMenu.Builder menu =
-                StringSelectMenu.create(NAME).setPlaceholder("Choose Pokemon");
+        if (!pokemonList.isEmpty()) {
+            StringSelectMenu.Builder menu =
+                    StringSelectMenu.create(NAME).setPlaceholder("Choose Pokemon");
 
-        for (String pokemon : pokemonList) {
-            menu.addOption(pokemon, pokemon);
+            for (String pokemon : pokemonList) {
+                menu.addOption(pokemon, pokemon);
+            }
+
+            event.replyEmbeds(embedBuilder.build())
+                    .addActionRow(menu.build())
+                    .setEphemeral(false)
+                    .queue();
+        } else {
+            embedBuilder.setFooter(
+                    String.format("There is no Pokemon in your team 👀 Use /catch to get one 🤩"));
+            event.replyEmbeds(embedBuilder.build()).queue();
         }
-
-        event.replyEmbeds(embedBuilder.build())
-                .addActionRow(menu.build())
-                .setEphemeral(false)
-                .queue();
     }
 
     @Override
