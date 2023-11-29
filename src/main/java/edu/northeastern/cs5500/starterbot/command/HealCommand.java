@@ -106,8 +106,6 @@ public class HealCommand implements SlashCommandHandler, StringSelectHandler {
                                     trainerDiscordId,
                                     trainerController.getCoinBalanceFromTrainer(trainerDiscordId)))
                     .queue();
-
-            event.reply(response).queue();
         }
     }
 }
