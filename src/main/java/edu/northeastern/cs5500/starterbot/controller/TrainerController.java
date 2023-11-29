@@ -101,6 +101,14 @@ public class TrainerController {
         trainerRepository.update(trainer);
     }
 
+    /**
+     * Retrieves a random Pokemon from the inventory of the trainer associated with the provided
+     * Discord member ID.
+     *
+     * @param discordMemberId discordMemberId The Discord member ID of the trainer.
+     * @return A randomly selected Pokemon from the trainer's inventory, or null if the inventory is
+     *     empty.
+     */
     public Pokemon getRandomPokemonFromTrainer(String discordMemberId) {
         Trainer trainer = getTrainerForMemberId(discordMemberId);
         List<ObjectId> pokemonList = trainer.getPokemonInventory();
@@ -143,6 +151,15 @@ public class TrainerController {
         return null;
     }
 
+    /**
+     * Updates the Pokemon HP and total stats of a trainer based on the provided Pokemon name and
+     * multiplier.
+     *
+     * @param discordMemberId The Discord member ID of the trainer.
+     * @param name The name of the Pokemon whose stats are to be updated.
+     * @param plusOrMinus The multiplier to adjust the Pokemon's HP and total stats (e.g., +1 for an
+     *     increase, -1 for a decrease).
+     */
     public void updatePokemonStatsForTrainer(String discordMemberId, String name, int plusOrMinus) {
         Trainer trainer = getTrainerForMemberId(discordMemberId);
 

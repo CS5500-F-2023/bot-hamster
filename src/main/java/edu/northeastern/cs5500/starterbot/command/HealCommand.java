@@ -49,27 +49,32 @@ public class HealCommand implements SlashCommandHandler, StringSelectHandler {
     public void onSlashCommandInteraction(@Nonnull SlashCommandInteractionEvent event) {
         log.info("event: /heal");
 
+        String trainerDiscordId = event.getMember().getId();
+        Collection<String> pokemonList =
+                trainerController.getPokemonNamesFromTrainerInventory(trainerDiscordId);
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("SOS Your Pokemon is injured!");
         embedBuilder.setDescription("Heal your Pokemon with 25 coins");
         embedBuilder.setImage(
                 "https://attackofthefanboy.com/256x256/wp-content/uploads/2016/07/Pokemon-Go-How-to-heal-and-revive.jpg");
 
-        String trainerDiscordId = event.getMember().getId();
-        Collection<String> pokemonList =
-                trainerController.getPokemonNamesFromTrainerInventory(trainerDiscordId);
+        if (!pokemonList.isEmpty()) {
+            StringSelectMenu.Builder menu =
+                    StringSelectMenu.create(NAME).setPlaceholder("Choose Pokemon");
 
-        StringSelectMenu.Builder menu =
-                StringSelectMenu.create(NAME).setPlaceholder("Choose Pokemon");
+            for (String pokemon : pokemonList) {
+                menu.addOption(pokemon, pokemon);
+            }
 
-        for (String pokemon : pokemonList) {
-            menu.addOption(pokemon, pokemon);
+            event.replyEmbeds(embedBuilder.build())
+                    .addActionRow(menu.build())
+                    .setEphemeral(false)
+                    .queue();
+        } else {
+            embedBuilder.setFooter(
+                    String.format("There is no Pokemon in your team 👀 Use /catch to get one 🤩"));
+            event.replyEmbeds(embedBuilder.build()).queue();
         }
-
-        event.replyEmbeds(embedBuilder.build())
-                .addActionRow(menu.build())
-                .setEphemeral(false)
-                .queue();
     }
 
     @Override
