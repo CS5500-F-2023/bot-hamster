@@ -4,6 +4,7 @@ import edu.northeastern.cs5500.starterbot.controller.PokedexController;
 import edu.northeastern.cs5500.starterbot.controller.PokemonController;
 import edu.northeastern.cs5500.starterbot.controller.TrainerController;
 import edu.northeastern.cs5500.starterbot.model.Pokemon;
+import edu.northeastern.cs5500.starterbot.model.PokemonSpecies;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.Nonnull;
@@ -172,5 +173,20 @@ public class ShopCommand implements SlashCommandHandler, ButtonHandler, StringSe
                                 "The stats of %s has been updated 🎉 \nSee you next time!",
                                 response))
                 .queue();
+
+        if (pokemonController.levelUpPokemon(pokemon)) {
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            PokemonSpecies species =
+                    pokedexController.getPokemonSpeciesByNumber(pokemon.getPokedexNumber());
+            embedBuilder.setThumbnail(species.getImageUrl());
+            embedBuilder.setTitle("Congratulations 🎉🎉🎉");
+            embedBuilder.setDescription(
+                    String.format(
+                            "Your Pokemon %s is now level %s! \n Use /home to reveal your Pokemon's new stats 🔍",
+                            response, pokemon.getLevel()));
+
+            // Send the additional embedded message
+            event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
+        }
     }
 }

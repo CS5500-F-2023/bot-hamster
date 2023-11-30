@@ -101,16 +101,50 @@ public class PokemonController {
         return catchPokemon(pokedexNumber);
     }
 
-    public void updatePokemon(Pokemon pokemon) {
-        Pokemon existingPokemon = getPokemonById(pokemon.getId().toString());
-        existingPokemon.setHp(pokemon.getHp());
-        existingPokemon.setTotal(pokemon.getTotal());
-        pokemonRepository.update(existingPokemon);
-    }
-
     public void updatePokemonHP(Pokemon pokemon, int newHP) {
         pokemon.setHp(pokemon.getHp() + newHP);
         pokemon.setTotal(pokemon.getTotal() + newHP);
         pokemonRepository.update(pokemon);
+    }
+
+    /**
+     * Updates the Pokemon HP and total stats based on the provided Pokemon and multiplier.
+     *
+     * @param pokemon The Pokemon whose stats are to be updated.
+     * @param plusOrMinus The multiplier to adjust the Pokemon's HP and total stats (e.g., +1 for an
+     *     increase, -1 for a decrease).
+     */
+    public void updatePokemonHPByHalf(Pokemon pokemon, int plusOrMinus) {
+        int halfPokemonHP = (int) (pokemon.getHp() / 2.0) * plusOrMinus;
+        int newPokemonHP = pokemon.getHp() + halfPokemonHP;
+        int newPokemonTotal = pokemon.getTotal() + halfPokemonHP;
+
+        pokemon.setHp(newPokemonHP);
+        pokemon.setTotal(newPokemonTotal);
+        pokemonRepository.update(pokemon);
+    }
+
+    /**
+     * Checks if a Pokemon's HP is divisible by 3. If true, increments the Pokemon's level by 1 and
+     * updates the changes in the repository. If false, the Pokemon's level remains unchanged.
+     *
+     * @param pokemon The Pokemon to be leveled up.
+     * @return true if the Pokemon's level is increased, false otherwise.
+     */
+    public boolean levelUpPokemon(Pokemon pokemon) {
+        if (pokemon.getHp() % 3 == 0) {
+            pokemon.setLevel(pokemon.getLevel() + 1);
+            pokemon.setHp(pokemon.getHp() + 5);
+            pokemon.setAttack(pokemon.getAttack() + 3);
+            pokemon.setDefense(pokemon.getDefense() + 2);
+            pokemon.setSpecialAttack(pokemon.getSpecialAttack() + 2);
+            pokemon.setSpecialDefense(pokemon.getSpecialDefense() + 2);
+            pokemon.setSpeed(pokemon.getSpeed() + 4);
+            pokemon.setTotal(pokemon.getTotal() + 18);
+            pokemonRepository.update(pokemon);
+            return true;
+        } else {
+            return false;
+        }
     }
 }
