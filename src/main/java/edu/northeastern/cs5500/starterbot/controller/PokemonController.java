@@ -107,4 +107,10 @@ public class PokemonController {
         existingPokemon.setTotal(pokemon.getTotal());
         pokemonRepository.update(existingPokemon);
     }
+
+    public void updatePokemonHP(Pokemon pokemon, int newHP) {
+        pokemon.setHp(pokemon.getHp() + newHP);
+        pokemon.setTotal(pokemon.getTotal() + newHP);
+        pokemonRepository.update(pokemon);
+    }
 }
