@@ -96,7 +96,8 @@ public class HealCommand implements SlashCommandHandler, StringSelectHandler {
                                     response, trainerDiscordId))
                     .queue();
         } else {
-            pokemonController.updatePokemonHPByHalf(pokemon, +1);
+            pokemonController.updatePokemonHP(pokemon, 20);
+            pokemonController.updatePokemonMood(pokemon, 1);
             trainerController.updateCoinBalanceForTrainer(trainerDiscordId, -25);
 
             event.reply(
@@ -110,6 +111,7 @@ public class HealCommand implements SlashCommandHandler, StringSelectHandler {
                     .queue();
         }
 
+        // Handle Pokemon level-up
         if (pokemonController.levelUpPokemon(pokemon)) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             PokemonSpecies species =

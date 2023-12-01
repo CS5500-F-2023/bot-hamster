@@ -107,6 +107,11 @@ public class PokemonController {
         pokemonRepository.update(pokemon);
     }
 
+    public void updatePokemonMood(Pokemon pokemon, int newMood) {
+        pokemon.setMood(pokemon.getMood() + newMood);
+        pokemonRepository.update(pokemon);
+    }
+
     /**
      * Updates the Pokemon HP and total stats based on the provided Pokemon and multiplier.
      *
@@ -125,14 +130,16 @@ public class PokemonController {
     }
 
     /**
-     * Checks if a Pokemon's HP is divisible by 3. If true, increments the Pokemon's level by 1 and
-     * updates the changes in the repository. If false, the Pokemon's level remains unchanged.
+     * Level up a Pokemon based on its current mood and level. If successful, increments the
+     * Pokemon's level by 1, increases the Pokemon's stats, resets the Pokemon's mood to 0, and
+     * updates the changes in the repository. If unsuccessful, the Pokemon's level remains
+     * unchanged.
      *
      * @param pokemon The Pokemon to be leveled up.
      * @return true if the Pokemon's level is increased, false otherwise.
      */
     public boolean levelUpPokemon(Pokemon pokemon) {
-        if (pokemon.getHp() % 3 == 0) {
+        if (pokemon.getMood() == 10 && pokemon.getLevel() <= 25) {
             pokemon.setLevel(pokemon.getLevel() + 1);
             pokemon.setHp(pokemon.getHp() + 5);
             pokemon.setAttack(pokemon.getAttack() + 3);
@@ -141,6 +148,9 @@ public class PokemonController {
             pokemon.setSpecialDefense(pokemon.getSpecialDefense() + 2);
             pokemon.setSpeed(pokemon.getSpeed() + 4);
             pokemon.setTotal(pokemon.getTotal() + 18);
+
+            // Reset Pokemon mood to 0 after successfully leveling up
+            pokemon.setMood(0);
             pokemonRepository.update(pokemon);
             return true;
         } else {

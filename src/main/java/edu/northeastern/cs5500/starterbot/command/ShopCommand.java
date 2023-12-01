@@ -62,8 +62,8 @@ public class ShopCommand implements SlashCommandHandler, ButtonHandler, StringSe
         embedBuilder.setTitle("Welcome to the Pokemon Item Market 💁");
         embedBuilder.setDescription(
                 "🪩 PokeBall   25 coins   -> Catch new Pokemon\n\n"
-                        + "🧋 MilkTea   10 coins   -> Random Pokemon HP + 4 \n\n"
-                        + "🍡 EnergyBar   15 coins   -> Selected Pokemon HP + 5\n\n\n"
+                        + "🧋 MilkTea   10 coins   -> Random Pokemon HP + 4, mood + 1\n\n"
+                        + "🍡 EnergyBar   15 coins   -> Selected Pokemon HP + 5, mood + 1\n\n\n"
                         + "More to come...🧁 🍕 🍟 🍜");
 
         // image
@@ -118,7 +118,8 @@ public class ShopCommand implements SlashCommandHandler, ButtonHandler, StringSe
                 trainerController.updateCoinBalanceForTrainer(trainerDiscordId, -milkteaPrice);
                 Pokemon randomPokemon =
                         trainerController.getRandomPokemonFromTrainer(trainerDiscordId);
-                pokemonController.updatePokemonHP(randomPokemon, 2);
+                pokemonController.updatePokemonHP(randomPokemon, 4);
+                pokemonController.updatePokemonMood(randomPokemon, 1);
                 String pokemonName =
                         pokedexController
                                 .getPokemonSpeciesByNumber(randomPokemon.getPokedexNumber())
@@ -128,6 +129,23 @@ public class ShopCommand implements SlashCommandHandler, ButtonHandler, StringSe
                                         "👏 You have successfully purchased a MilkTea 🧋!\n The stats of %s has been updated!",
                                         pokemonName))
                         .queue();
+
+                // Handle Pokemon level-up
+                if (pokemonController.levelUpPokemon(randomPokemon)) {
+                    EmbedBuilder embedBuilder = new EmbedBuilder();
+                    PokemonSpecies species =
+                            pokedexController.getPokemonSpeciesByNumber(
+                                    randomPokemon.getPokedexNumber());
+                    embedBuilder.setThumbnail(species.getImageUrl());
+                    embedBuilder.setTitle("Congratulations 🎉🎉🎉");
+                    embedBuilder.setDescription(
+                            String.format(
+                                    "Your Pokemon %s is now level %s! \n Use /home to reveal your Pokemon's new stats 🔍",
+                                    pokemonName, randomPokemon.getLevel()));
+
+                    // Send the additional embedded message
+                    event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
+                }
             }
         }
     }
@@ -166,7 +184,8 @@ public class ShopCommand implements SlashCommandHandler, ButtonHandler, StringSe
         ObjectId pokemonId =
                 trainerController.getPokemonIdByPokemonName(trainerDiscordId, response);
         Pokemon pokemon = pokemonController.getPokemonByObjectId(pokemonId);
-        pokemonController.updatePokemonHP(pokemon, 2);
+        pokemonController.updatePokemonHP(pokemon, 5);
+        pokemonController.updatePokemonMood(pokemon, 1);
 
         event.reply(
                         String.format(
@@ -174,6 +193,7 @@ public class ShopCommand implements SlashCommandHandler, ButtonHandler, StringSe
                                 response))
                 .queue();
 
+        // Handle Pokemon level-up
         if (pokemonController.levelUpPokemon(pokemon)) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             PokemonSpecies species =
