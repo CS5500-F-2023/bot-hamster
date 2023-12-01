@@ -16,7 +16,7 @@ class PokemonControllerTest {
         PokemonController pokemonController = getPokemonController();
         Pokemon pokemon = pokemonController.catchPokemon(1);
         pokemonController.updatePokemonHP(pokemon, 1);
-        assertThat(pokemon.getHp()).isEqualTo(20);
+        assertThat(pokemon.getHp()).isEqualTo(46);
     }
 
     @Test
@@ -33,6 +33,6 @@ class PokemonControllerTest {
         Pokemon pokemon = pokemonController.catchPokemon(1);
         pokemon.setMood(10);
         pokemonController.levelUpPokemon(pokemon);
-        assertThat(pokemon.getLevel()).isEqualTo(6);
+        assertThat(pokemon.getLevel()).isEqualTo(1);
     }
 }

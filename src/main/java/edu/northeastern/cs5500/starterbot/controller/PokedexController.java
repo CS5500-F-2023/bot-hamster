@@ -2,53 +2,62 @@ package edu.northeastern.cs5500.starterbot.controller;
 
 import edu.northeastern.cs5500.starterbot.model.PokemonSpecies;
 import edu.northeastern.cs5500.starterbot.model.PokemonSpecies.PokemonSpeciesBuilder;
-import edu.northeastern.cs5500.starterbot.model.PokemonType;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Singleton
 public class PokedexController {
+    private final Map<Integer, PokemonSpecies> pokemonSpeciesMap;
+    private final String path =
+            "src/main/java/edu/northeastern/cs5500/starterbot/data/pokemon_dataset.csv";
+
     @Inject
     PokedexController() {
-        // empty and defined for Dagger
+        this.pokemonSpeciesMap = loadPokemonData(path);
     }
 
     @Nonnull
     public PokemonSpecies getPokemonSpeciesByNumber(int pokedexNumber) {
-        PokemonSpeciesBuilder builder = PokemonSpecies.builder();
-        builder.pokedexNumber(pokedexNumber);
-        switch (pokedexNumber) {
-            case 1:
-                builder.name("Bulbasaur");
-                builder.types(PokemonType.getSingleTypeArray(PokemonType.GRASS));
-                builder.imageUrl("https://placehold.co/256x256/green/white.png?text=Bulbasaur");
-                break;
-            case 2:
-                // case 4:
-                // temporary comment out to implement random
-                builder.name("Charmander");
-                builder.types(PokemonType.getSingleTypeArray(PokemonType.FIRE));
-                builder.imageUrl("https://placehold.co/256x256/red/white.png?text=Charmander");
-                break;
-            case 3:
-                // case 7:
-                // temporary comment out to implement random
-                builder.name("Squirtle");
-                builder.types(PokemonType.getSingleTypeArray(PokemonType.WATER));
-                builder.imageUrl("https://placehold.co/256x256/blue/white.png?text=Squirtle");
-                break;
-            case 4:
-                // case 19:
-                // temporary comment out to implement random
-                builder.name("Rattata");
-                builder.types(PokemonType.getSingleTypeArray(PokemonType.NORMAL));
-                builder.imageUrl("https://placehold.co/256x256.png?text=Rattata");
-                break;
-            default:
-                throw new IllegalStateException();
+        return Objects.requireNonNull(pokemonSpeciesMap.get(pokedexNumber));
+    }
+
+    private Map<Integer, PokemonSpecies> loadPokemonData(String filename) {
+        Map<Integer, PokemonSpecies> map = new HashMap<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            reader.readLine(); // Skip header
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // parse and read data
+                String[] data = line.split(",");
+                int pokedexNumber = Integer.parseInt(data[0]);
+                String name = data[1];
+                String imageUrl =
+                        String.format(
+                                "https://assets.pokemon.com/assets/cms2/img/pokedex/full/%s.png",
+                                pokedexNumber);
+
+                // build PokemonSpecies
+                PokemonSpeciesBuilder builder =
+                        PokemonSpecies.builder()
+                                .pokedexNumber(pokedexNumber)
+                                .name(name)
+                                .imageUrl(imageUrl);
+
+                map.put(pokedexNumber, builder.build());
+            }
+        } catch (IOException e) {
+            log.error("Error loading Pokemon data from file: {}", filename, e);
         }
-        return Objects.requireNonNull(builder.build());
+        return map;
     }
 }

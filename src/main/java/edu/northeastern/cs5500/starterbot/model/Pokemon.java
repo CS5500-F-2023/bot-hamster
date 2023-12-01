@@ -15,8 +15,7 @@ public class Pokemon implements Model {
 
     @Nonnull Integer pokedexNumber;
 
-    // TODO: Modify the initial Pokemon level
-    @Nonnull @Builder.Default Integer level = 5;
+    @Nonnull @Builder.Default Integer level = 0;
 
     @Nonnull @Builder.Default Integer mood = 0;
 
