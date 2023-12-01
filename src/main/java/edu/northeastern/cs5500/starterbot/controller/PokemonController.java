@@ -49,6 +49,7 @@ public class PokemonController {
         int specialAttack = Integer.parseInt(pokemonDataArray[7]);
         int specialDefense = Integer.parseInt(pokemonDataArray[8]);
         int speed = Integer.parseInt(pokemonDataArray[9]);
+        int mood = Integer.parseInt(pokemonDataArray[10]);
         int total = Integer.parseInt(pokemonDataArray[3]);
 
         PokemonBuilder builder = Pokemon.builder();
@@ -59,6 +60,7 @@ public class PokemonController {
                 .specialAttack(specialAttack)
                 .specialDefense(specialDefense)
                 .speed(speed)
+                .mood(mood)
                 .total(total);
 
         Pokemon pokemon = Objects.requireNonNull(builder.build());
