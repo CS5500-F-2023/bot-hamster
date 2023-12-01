@@ -3,6 +3,14 @@ package edu.northeastern.cs5500.starterbot.controller;
 import edu.northeastern.cs5500.starterbot.model.Pokemon;
 import edu.northeastern.cs5500.starterbot.model.Pokemon.PokemonBuilder;
 import edu.northeastern.cs5500.starterbot.repository.GenericRepository;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import javax.annotation.Nonnull;
@@ -14,79 +22,87 @@ import org.bson.types.ObjectId;
 public class PokemonController {
 
     GenericRepository<Pokemon> pokemonRepository;
-
+    PokedexController pokedexController;
     private Random random = new Random();
+    private Map<Integer, String> pokemonDataMap = new HashMap<>();
+    private final String path = "src/main/java/edu/northeastern/cs5500/starterbot/data/pokemon_dataset.csv";
+
 
     @Inject
-    PokemonController(GenericRepository<Pokemon> pokemonRepository) {
+    PokemonController(GenericRepository<Pokemon> pokemonRepository, PokedexController pokedexController) {
         this.pokemonRepository = pokemonRepository;
+        this.pokedexController = pokedexController;
     }
 
     /**
-     * Create a new Pokemon of the specifed number and added it to the repository
+     * Create a new Pokemon of the specified number and add it to the repository.
      *
      * @param pokedexNumber the number of the Pokemon to catch
      * @return a new Pokemon with a unique ID
      */
     @Nonnull
     public Pokemon catchPokemon(int pokedexNumber) {
+        String pokemonData = getPokemonData(pokedexNumber);
+        String[] pokemonDataArray = pokemonData.split(",");
+
+        int hp = Integer.parseInt(pokemonDataArray[4]);
+        int attack = Integer.parseInt(pokemonDataArray[5]);
+        int defense = Integer.parseInt(pokemonDataArray[6]);
+        int specialAttack = Integer.parseInt(pokemonDataArray[7]);
+        int specialDefense = Integer.parseInt(pokemonDataArray[8]);
+        int speed = Integer.parseInt(pokemonDataArray[9]);
+        int total = Integer.parseInt(pokemonDataArray[3]);
+
         PokemonBuilder builder = Pokemon.builder();
-        builder.pokedexNumber(pokedexNumber);
-        switch (pokedexNumber) {
-            case 1:
-                builder.hp(19);
-                builder.attack(9);
-                builder.defense(9);
-                builder.specialAttack(11);
-                builder.specialDefense(11);
-                builder.speed(9);
-                builder.total(68);
-                break;
-            case 2:
-                // case 4:
-                // temporary comment out to implement random
-                builder.hp(18);
-                builder.attack(18);
-                builder.defense(9);
-                builder.specialAttack(11);
-                builder.specialDefense(10);
-                builder.speed(11);
-                builder.total(77);
-                break;
-            case 3:
-                // case 7:
-                // temporary comment out to implement random
-                builder.hp(19);
-                builder.attack(9);
-                builder.defense(9);
-                builder.specialAttack(11);
-                builder.specialDefense(11);
-                builder.speed(9);
-                builder.total(77);
-                break;
-            case 4:
-                // case 19:
-                // temporary comment out to implement random
-                builder.hp(18);
-                builder.attack(10);
-                builder.defense(8);
-                builder.specialAttack(7);
-                builder.specialDefense(8);
-                builder.speed(12);
-                builder.total(63);
-                break;
-            default:
-                throw new IllegalStateException();
-        }
+        builder.pokedexNumber(pokedexNumber)
+                .hp(hp)
+                .attack(attack)
+                .defense(defense)
+                .specialAttack(specialAttack)
+                .specialDefense(specialDefense)
+                .speed(speed)
+                .total(total);
+
         Pokemon pokemon = Objects.requireNonNull(builder.build());
         pokemonRepository.add(pokemon);
         return pokemon;
     }
 
+    private String getPokemonData(int pokedexNumber) {
+        if (pokemonDataMap.containsKey(pokedexNumber)) {
+            return pokemonDataMap.get(pokedexNumber);
+        } else {
+            String pokemonData = fetchPokemonData(pokedexNumber);
+            pokemonDataMap.put(pokedexNumber, pokemonData);
+            return pokemonData;
+        }
+    }
+
+    private String fetchPokemonData(int pokedexNumber) {
+        Path filePath = Paths.get(path);
+
+        try (BufferedReader reader = Files.newBufferedReader(filePath)) {
+            // Skip to the desired line in the CSV file
+            for (int i = 0; i < pokedexNumber; i++) {
+                String line = reader.readLine();
+                if (line == null) {
+                    throw new IllegalArgumentException("Invalid Pokedex number: " + pokedexNumber);
+                }
+            }
+
+            // Read data from the specific line
+            return reader.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading Pokemon data", e);
+        }
+    }
+
+    /**
+     * Catch a random Pokemon.
+     * @return a new randomly caught Pokemon
+     */
     public Pokemon catchRandomPokemon() {
-        // TODO: Modify the random index based on the catchPokemon method or the Pokemon data
-        // resource file.
-        return catchPokemon(random.nextInt(4) + 1);
+        return catchPokemon(random.nextInt(721));
     }
 
     public Pokemon getPokemonById(String pokemonId) {

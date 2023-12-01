@@ -17,11 +17,18 @@ public enum PokemonType {
         this.emoji = emoji;
     }
 
-    // ???
-    @Nonnull
-    public static PokemonType[] getSingleTypeArray(PokemonType type) {
-        PokemonType[] types = new PokemonType[1];
-        types[0] = type;
-        return types;
+    /**
+     * Get PokemonType from a string.
+     *
+     * @param typeString the string representation of the Pokemon type
+     * @return the corresponding PokemonType, or null if not found
+     */
+    public static PokemonType getType(String typeString) {
+        for (PokemonType type : values()) {
+            if (type.name().equalsIgnoreCase(typeString)) {
+                return type;
+            }
+        }
+        return null;
     }
 }

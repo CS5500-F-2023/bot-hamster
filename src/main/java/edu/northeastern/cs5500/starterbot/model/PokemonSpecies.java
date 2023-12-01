@@ -12,6 +12,4 @@ public class PokemonSpecies {
     @Nonnull final String imageUrl;
 
     @Nonnull final String name;
-
-    @Nonnull final PokemonType[] types;
 }
