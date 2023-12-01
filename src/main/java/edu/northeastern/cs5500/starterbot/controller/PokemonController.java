@@ -103,7 +103,7 @@ public class PokemonController {
      * @return a new randomly caught Pokemon
      */
     public Pokemon catchRandomPokemon() {
-        return catchPokemon(random.nextInt(721));
+        return catchPokemon(random.nextInt(721) + 1);
     }
 
     public Pokemon getPokemonById(String pokemonId) {
