@@ -3,12 +3,11 @@ package edu.northeastern.cs5500.starterbot.controller;
 import edu.northeastern.cs5500.starterbot.model.Pokemon;
 import edu.northeastern.cs5500.starterbot.model.Pokemon.PokemonBuilder;
 import edu.northeastern.cs5500.starterbot.repository.GenericRepository;
-
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -25,13 +24,12 @@ public class PokemonController {
     PokedexController pokedexController;
     private Random random = new Random();
     private Map<Integer, String> pokemonDataMap = new HashMap<>();
-    private final String path = "src/main/java/edu/northeastern/cs5500/starterbot/data/pokemon_dataset.csv";
-
+    private final String path =
+            "src/main/java/edu/northeastern/cs5500/starterbot/data/pokemon_dataset.csv";
 
     @Inject
-    PokemonController(GenericRepository<Pokemon> pokemonRepository, PokedexController pokedexController) {
+    PokemonController(GenericRepository<Pokemon> pokemonRepository) {
         this.pokemonRepository = pokemonRepository;
-        this.pokedexController = pokedexController;
     }
 
     /**
@@ -99,6 +97,7 @@ public class PokemonController {
 
     /**
      * Catch a random Pokemon.
+     *
      * @return a new randomly caught Pokemon
      */
     public Pokemon catchRandomPokemon() {

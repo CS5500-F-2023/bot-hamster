@@ -2,10 +2,9 @@ package edu.northeastern.cs5500.starterbot.controller;
 
 import edu.northeastern.cs5500.starterbot.model.PokemonSpecies;
 import edu.northeastern.cs5500.starterbot.model.PokemonSpecies.PokemonSpeciesBuilder;
-
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -16,7 +15,8 @@ import javax.inject.Singleton;
 @Singleton
 public class PokedexController {
     private final Map<Integer, PokemonSpecies> pokemonSpeciesMap;
-    private final String path = "src/main/java/edu/northeastern/cs5500/starterbot/data/pokemon_dataset.csv";
+    private final String path =
+            "src/main/java/edu/northeastern/cs5500/starterbot/data/pokemon_dataset.csv";
 
     @Inject
     PokedexController() {
@@ -39,13 +39,17 @@ public class PokedexController {
                 String[] data = line.split(",");
                 int pokedexNumber = Integer.parseInt(data[0]);
                 String name = data[1];
-                String imageUrl = String.format("https://assets.pokemon.com/assets/cms2/img/pokedex/full/%s.png", pokedexNumber);
+                String imageUrl =
+                        String.format(
+                                "https://assets.pokemon.com/assets/cms2/img/pokedex/full/%s.png",
+                                pokedexNumber);
 
                 // build PokemonSpecies
-                PokemonSpeciesBuilder builder = PokemonSpecies.builder()
-                        .pokedexNumber(pokedexNumber)
-                        .name(name)
-                        .imageUrl(imageUrl);
+                PokemonSpeciesBuilder builder =
+                        PokemonSpecies.builder()
+                                .pokedexNumber(pokedexNumber)
+                                .name(name)
+                                .imageUrl(imageUrl);
 
                 map.put(pokedexNumber, builder.build());
             }
