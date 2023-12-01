@@ -124,6 +124,9 @@ public class HomeCommand implements SlashCommandHandler, ButtonHandler {
                 "**Level**: "
                         + Integer.toString(pokemon.getLevel())
                         + "\n"
+                        + "**Mood: **"
+                        + Integer.toString(pokemon.getMood())
+                        + "\n"
                         + "**HP: **"
                         + Integer.toString(pokemon.getHp())
                         + "\n"

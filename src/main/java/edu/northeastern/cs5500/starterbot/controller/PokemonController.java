@@ -101,16 +101,60 @@ public class PokemonController {
         return catchPokemon(pokedexNumber);
     }
 
-    public void updatePokemon(Pokemon pokemon) {
-        Pokemon existingPokemon = getPokemonById(pokemon.getId().toString());
-        existingPokemon.setHp(pokemon.getHp());
-        existingPokemon.setTotal(pokemon.getTotal());
-        pokemonRepository.update(existingPokemon);
-    }
-
     public void updatePokemonHP(Pokemon pokemon, int newHP) {
         pokemon.setHp(pokemon.getHp() + newHP);
         pokemon.setTotal(pokemon.getTotal() + newHP);
         pokemonRepository.update(pokemon);
+    }
+
+    public void updatePokemonMood(Pokemon pokemon, int newMood) {
+        pokemon.setMood(pokemon.getMood() + newMood);
+        pokemonRepository.update(pokemon);
+    }
+
+    /**
+     * Updates the Pokemon HP and total stats based on the provided Pokemon and multiplier.
+     *
+     * @param pokemon The Pokemon whose stats are to be updated.
+     * @param plusOrMinus The multiplier to adjust the Pokemon's HP and total stats (e.g., +1 for an
+     *     increase, -1 for a decrease).
+     */
+    public void updatePokemonHPByHalf(Pokemon pokemon, int plusOrMinus) {
+        int halfPokemonHP = (int) (pokemon.getHp() / 2.0) * plusOrMinus;
+        int newPokemonHP = pokemon.getHp() + halfPokemonHP;
+        int newPokemonTotal = pokemon.getTotal() + halfPokemonHP;
+
+        pokemon.setHp(newPokemonHP);
+        pokemon.setTotal(newPokemonTotal);
+        pokemonRepository.update(pokemon);
+    }
+
+    /**
+     * Level up a Pokemon based on its current mood and level. If successful, increments the
+     * Pokemon's level by 1, increases the Pokemon's stats, resets the Pokemon's mood to 0, and
+     * updates the changes in the repository. If unsuccessful, the Pokemon's level remains
+     * unchanged.
+     *
+     * @param pokemon The Pokemon to be leveled up.
+     * @return true if the Pokemon's level is increased, false otherwise.
+     */
+    public boolean levelUpPokemon(Pokemon pokemon) {
+        if (pokemon.getMood() == 10 && pokemon.getLevel() <= 25) {
+            pokemon.setLevel(pokemon.getLevel() + 1);
+            pokemon.setHp(pokemon.getHp() + 5);
+            pokemon.setAttack(pokemon.getAttack() + 3);
+            pokemon.setDefense(pokemon.getDefense() + 2);
+            pokemon.setSpecialAttack(pokemon.getSpecialAttack() + 2);
+            pokemon.setSpecialDefense(pokemon.getSpecialDefense() + 2);
+            pokemon.setSpeed(pokemon.getSpeed() + 4);
+            pokemon.setTotal(pokemon.getTotal() + 18);
+
+            // Reset Pokemon mood to 0 after successfully leveling up
+            pokemon.setMood(0);
+            pokemonRepository.update(pokemon);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

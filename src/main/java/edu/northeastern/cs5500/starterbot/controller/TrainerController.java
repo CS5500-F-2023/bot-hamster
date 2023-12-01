@@ -82,6 +82,14 @@ public class TrainerController {
         return trainer.getPokeBallQuantity();
     }
 
+    /**
+     * Updates the PokeBall quantity for a trainer identified by their Discord member ID by the
+     * specified number of PokeBalls.
+     *
+     * @param discordMemberId The Discord member ID of the trainer.
+     * @param numOfPokeBall The number of PokeBalls to be added to the trainer's current PokeBall
+     *     quantity.
+     */
     public void updatePokeBallForTrainer(String discordMemberId, int numOfPokeBall) {
         Trainer trainer = getTrainerForMemberId(discordMemberId);
         int newPokeBallQuantity = trainer.getPokeBallQuantity() + numOfPokeBall;
@@ -94,6 +102,13 @@ public class TrainerController {
         return trainer.getCoinBalance();
     }
 
+    /**
+     * Updates the coin balance for a trainer identified by their Discord member ID by the specified
+     * number of coins.
+     *
+     * @param discordMemberId The Discord member ID of the trainer.
+     * @param numOfCoin The number of coins to be added to the trainer's current coin balance.
+     */
     public void updateCoinBalanceForTrainer(String discordMemberId, int numOfCoin) {
         Trainer trainer = getTrainerForMemberId(discordMemberId);
         int newCoinQuantity = trainer.getCoinBalance() + numOfCoin;
@@ -105,7 +120,7 @@ public class TrainerController {
      * Retrieves a random Pokemon from the inventory of the trainer associated with the provided
      * Discord member ID.
      *
-     * @param discordMemberId discordMemberId The Discord member ID of the trainer.
+     * @param discordMemberId The Discord member ID of the trainer.
      * @return A randomly selected Pokemon from the trainer's inventory, or null if the inventory is
      *     empty.
      */
@@ -149,35 +164,5 @@ public class TrainerController {
             }
         }
         return null;
-    }
-
-    /**
-     * Updates the Pokemon HP and total stats of a trainer based on the provided Pokemon name and
-     * multiplier.
-     *
-     * @param discordMemberId The Discord member ID of the trainer.
-     * @param name The name of the Pokemon whose stats are to be updated.
-     * @param plusOrMinus The multiplier to adjust the Pokemon's HP and total stats (e.g., +1 for an
-     *     increase, -1 for a decrease).
-     */
-    public void updatePokemonStatsForTrainer(String discordMemberId, String name, int plusOrMinus) {
-        Trainer trainer = getTrainerForMemberId(discordMemberId);
-
-        for (ObjectId pokemonId : trainer.getPokemonInventory()) {
-            Pokemon pokemon = pokemonController.getPokemonById(pokemonId.toString());
-            int pokedexNum = pokemon.getPokedexNumber();
-            String pokemonName = pokedexController.getPokemonSpeciesByNumber(pokedexNum).getName();
-
-            if (name.equals(pokemonName)) {
-                int halfPokemonHP = (int) (pokemon.getHp() / 2.0) * plusOrMinus;
-                int newPokemonHP = pokemon.getHp() + halfPokemonHP;
-                int newPokemonTotal = pokemon.getTotal() + halfPokemonHP;
-
-                pokemon.setHp(newPokemonHP);
-                pokemon.setTotal(newPokemonTotal);
-                pokemonController.updatePokemon(pokemon);
-                trainerRepository.update(trainer);
-            }
-        }
     }
 }
