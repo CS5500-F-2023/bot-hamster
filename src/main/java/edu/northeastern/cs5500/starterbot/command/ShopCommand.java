@@ -62,8 +62,8 @@ public class ShopCommand implements SlashCommandHandler, ButtonHandler, StringSe
         embedBuilder.setTitle("Welcome to the Pokemon Item Market 💁");
         embedBuilder.setDescription(
                 "🪩 PokeBall   25 coins   -> Catch new Pokemon\n\n"
-                        + "🧋 MilkTea   10 coins   -> Random Pokemon HP + 4, mood + 1\n\n"
-                        + "🍡 EnergyBar   15 coins   -> Selected Pokemon HP + 5, mood + 1\n\n\n"
+                        + "🧋 MilkTea   10 coins   -> Random Pokemon HP + 8, mood + 1\n\n"
+                        + "🍡 EnergyBar   15 coins   -> Selected Pokemon HP + 10, mood + 1\n\n\n"
                         + "More to come...🧁 🍕 🍟 🍜");
 
         // image
