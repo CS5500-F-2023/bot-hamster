@@ -96,7 +96,7 @@ public class HealCommand implements SlashCommandHandler, StringSelectHandler {
                                     response, trainerDiscordId))
                     .queue();
         } else {
-            pokemonController.updatePokemonHP(pokemon, 20);
+            pokemonController.updatePokemonHP(pokemon, 40);
             pokemonController.updatePokemonMood(pokemon, 1);
             trainerController.updateCoinBalanceForTrainer(trainerDiscordId, -25);
 

@@ -118,7 +118,7 @@ public class ShopCommand implements SlashCommandHandler, ButtonHandler, StringSe
                 trainerController.updateCoinBalanceForTrainer(trainerDiscordId, -milkteaPrice);
                 Pokemon randomPokemon =
                         trainerController.getRandomPokemonFromTrainer(trainerDiscordId);
-                pokemonController.updatePokemonHP(randomPokemon, 4);
+                pokemonController.updatePokemonHP(randomPokemon, 8);
                 pokemonController.updatePokemonMood(randomPokemon, 1);
                 String pokemonName =
                         pokedexController
@@ -184,7 +184,7 @@ public class ShopCommand implements SlashCommandHandler, ButtonHandler, StringSe
         ObjectId pokemonId =
                 trainerController.getPokemonIdByPokemonName(trainerDiscordId, response);
         Pokemon pokemon = pokemonController.getPokemonByObjectId(pokemonId);
-        pokemonController.updatePokemonHP(pokemon, 5);
+        pokemonController.updatePokemonHP(pokemon, 10);
         pokemonController.updatePokemonMood(pokemon, 1);
 
         event.reply(
