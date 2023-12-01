@@ -54,8 +54,7 @@ public class PokedexController {
                 map.put(pokedexNumber, builder.build());
             }
         } catch (IOException e) {
-            // Handle the exception or log it using a logging framework
-            e.printStackTrace();
+            logger.error("Error loading Pokemon data from file: {}", filename, e);
         }
         return map;
     }
