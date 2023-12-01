@@ -17,8 +17,6 @@ public class Pokemon implements Model {
 
     @Nonnull @Builder.Default Integer level = 0;
 
-    @Nonnull Integer mood;
-
     @Nonnull @Builder.Default Integer mood = 0;
 
     @Nonnull @Nonnegative Integer hp;
