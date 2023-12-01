@@ -11,7 +11,9 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Singleton
 public class PokedexController {
     private final Map<Integer, PokemonSpecies> pokemonSpeciesMap;
@@ -54,7 +56,7 @@ public class PokedexController {
                 map.put(pokedexNumber, builder.build());
             }
         } catch (IOException e) {
-            logger.error("Error loading Pokemon data from file: {}", filename, e);
+            log.error("Error loading Pokemon data from file: {}", filename, e);
         }
         return map;
     }
