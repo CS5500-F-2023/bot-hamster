@@ -162,4 +162,11 @@ public class CommandModule {
     public ButtonHandler provideShopCommandClickHandler(ShopCommand command) {
         return command;
     }
+
+    @Provides
+    @IntoMap
+    @StringKey(BattleCommand.NAME)
+    public SlashCommandHandler provideBattleCommand(BattleCommand command) {
+        return command;
+    }
 }
