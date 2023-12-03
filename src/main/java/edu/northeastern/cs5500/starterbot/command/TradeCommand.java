@@ -35,8 +35,6 @@ public class TradeCommand implements SlashCommandHandler, StringSelectHandler {
         // Empty and public for Dagger
     }
 
-    private String otherPlayerDiscordId;
-
     @Override
     @Nonnull
     public String getName() {
@@ -48,13 +46,15 @@ public class TradeCommand implements SlashCommandHandler, StringSelectHandler {
     public CommandData getCommandData() {
         return Commands.slash(getName(), "Trade - Trade a Pokemon with other player")
                 .addOption(
-                        OptionType.USER, "player", "Enter the Player to trade Pokemon with", true);
+                        OptionType.USER, "player", "Enter the user you want to trade with", true);
     }
 
     @Override
     public void onSlashCommandInteraction(@Nonnull SlashCommandInteractionEvent event) {
         log.info("event: /trade");
-        otherPlayerDiscordId = event.getOption("player").getAsMember().getId();
+
+        var otherPlayer = event.getOption("player").getAsMember();
+
         String trainerDiscordId = event.getMember().getId();
         Collection<String> pokemonList =
                 trainerController.getPokemonNamesFromTrainerInventory(trainerDiscordId);
@@ -69,33 +69,13 @@ public class TradeCommand implements SlashCommandHandler, StringSelectHandler {
                     StringSelectMenu.create(NAME).setPlaceholder("Choose Pokemon");
 
             for (String pokemon : pokemonList) {
-                menu.addOption(pokemon, pokemon);
+                menu.addOption(pokemon, String.format("%s:%s", pokemon, otherPlayer.getId()));
             }
 
             event.replyEmbeds(embedBuilder.build())
                     .addActionRow(menu.build())
                     .setEphemeral(false)
-                    .queue(
-                            response -> {
-                                // Provide instructions for the other user to respond in the private
-                                // channel
-                                event.getJDA()
-                                        .retrieveUserById(otherPlayerDiscordId)
-                                        .queue(
-                                                user -> {
-                                                    user.openPrivateChannel()
-                                                            .queue(
-                                                                    privateChannel -> {
-                                                                        privateChannel
-                                                                                .sendMessage(
-                                                                                        String
-                                                                                                .format(
-                                                                                                        "You received a trade offer from Player <@%s>! Respond now!",
-                                                                                                        trainerDiscordId))
-                                                                                .queue();
-                                                                    });
-                                                });
-                            });
+                    .queue();
         } else {
             embedBuilder.setFooter(
                     String.format("There is no Pokemon in your team 👀 Use /catch to get one 🤩"));
@@ -109,19 +89,20 @@ public class TradeCommand implements SlashCommandHandler, StringSelectHandler {
         final String response = event.getInteraction().getValues().get(0);
         Objects.requireNonNull(response);
 
+        String[] values = response.split(":");
+        String pokemonName = values[0];
+        String otherTrainerId = values[1];
+
         Trainer trainer = trainerController.getTrainerForMemberId(trainerDiscordId);
         ObjectId pokemonId =
-                trainerController.getPokemonIdByPokemonName(trainerDiscordId, response);
+                trainerController.getPokemonIdByPokemonName(trainerDiscordId, pokemonName);
         Pokemon pokemon = pokemonController.getPokemonById(pokemonId.toString());
-        String pokemonName =
+        pokemonName =
                 pokedexController.getPokemonSpeciesByNumber(pokemon.getPokedexNumber()).getName();
 
         //     tradeOfferController.createNewOffering(trainer, pokemon);
 
-        event.reply(
-                        String.format(
-                                "Trade offer for Pokemon %s successfully created! Wait for your friend to respond!",
-                                pokemonName))
+        event.reply(String.format("Trade offer for Pokemon successfully created!", pokemonName))
                 .queue();
     }
 }
