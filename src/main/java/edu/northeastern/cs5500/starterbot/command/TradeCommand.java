@@ -6,8 +6,6 @@ import edu.northeastern.cs5500.starterbot.controller.TradeOfferController;
 import edu.northeastern.cs5500.starterbot.controller.TrainerController;
 import edu.northeastern.cs5500.starterbot.model.Pokemon;
 import edu.northeastern.cs5500.starterbot.model.PokemonSpecies;
-import edu.northeastern.cs5500.starterbot.model.TradeOffer;
-import edu.northeastern.cs5500.starterbot.model.Trainer;
 import java.util.Collection;
 import java.util.Objects;
 import javax.annotation.Nonnull;
@@ -169,12 +167,6 @@ public class TradeCommand implements SlashCommandHandler, StringSelectHandler, B
         String otherTrainerPokemonId = event.getButton().getId().split(":")[3];
         String trainerDiscordId = event.getButton().getId().split(":")[4];
 
-        // Retrieve the trainers and Pokemon involved in the trade.
-        Trainer trainer = trainerController.getTrainerForMemberId(trainerDiscordId);
-        Trainer otherTrainer = trainerController.getTrainerForMemberId(otherTrainerId);
-        Pokemon pokemon = pokemonController.getPokemonById(pokemonId);
-        Pokemon otherTrainerPokemon = pokemonController.getPokemonById(otherTrainerPokemonId);
-
         // Check if the button interaction is valid based on the trainers' Discord IDs.
         if (trainerDiscordId.equals(otherTrainerId)) {
             event.reply("Sorry, you cannot respond to this trade offer.").queue();
@@ -182,11 +174,8 @@ public class TradeCommand implements SlashCommandHandler, StringSelectHandler, B
             event.reply(String.format("Player <@%s> decline the trade offer.", otherTrainerId))
                     .queue();
         } else if (event.getButton().getId().startsWith(getName() + ":accept:")) {
-            TradeOffer tradeOffer =
-                    tradeOfferController.createNewOffering(
-                            trainer, pokemon, otherTrainer, otherTrainerPokemon);
-            tradeOfferController.acceptOffer(tradeOffer);
-
+            tradeOfferController.acceptOffer(
+                    trainerDiscordId, pokemonId, otherTrainerId, otherTrainerPokemonId);
             event.reply("Trade success! Use /home to reveal your new Pokemon 🔍").queue();
         }
     }

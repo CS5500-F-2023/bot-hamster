@@ -5,9 +5,7 @@ import lombok.Data;
 import org.bson.types.ObjectId;
 
 @Data
-public class TradeOffer implements Model {
-    ObjectId id;
-
+public class TradeOffer {
     @Nonnull ObjectId trainerId;
 
     @Nonnull ObjectId pokemonId;
