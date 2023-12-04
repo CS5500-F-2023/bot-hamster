@@ -4,6 +4,7 @@ import edu.northeastern.cs5500.starterbot.controller.OfferController;
 import edu.northeastern.cs5500.starterbot.controller.PokedexController;
 import edu.northeastern.cs5500.starterbot.controller.PokemonController;
 import edu.northeastern.cs5500.starterbot.controller.TrainerController;
+import edu.northeastern.cs5500.starterbot.model.Offer;
 import edu.northeastern.cs5500.starterbot.model.Pokemon;
 import edu.northeastern.cs5500.starterbot.model.PokemonSpecies;
 import java.util.Collection;
@@ -174,8 +175,9 @@ public class TradeCommand implements SlashCommandHandler, StringSelectHandler, B
             event.reply(String.format("Player <@%s> decline the trade offer.", otherTrainerId))
                     .queue();
         } else if (event.getButton().getId().startsWith(getName() + ":accept:")) {
-            tradeOfferController.acceptTradeOffer(
-                    trainerDiscordId, pokemonId, otherTrainerId, otherTrainerPokemonId);
+            Offer tradeOffer =
+                    new Offer(trainerDiscordId, otherTrainerId, pokemonId, otherTrainerPokemonId);
+            tradeOfferController.acceptTradeOffer(tradeOffer);
             event.reply("Trade success! Use /home to reveal your new Pokemon 🔍").queue();
         }
     }

@@ -1,5 +1,7 @@
 package edu.northeastern.cs5500.starterbot.controller;
 
+import edu.northeastern.cs5500.starterbot.model.Offer;
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -14,12 +16,15 @@ public class OfferController {
         this.trainerController = trainerController;
     }
 
-    public void acceptTradeOffer(
-            String trainer, String pokemon, String otherTrainer, String otherPokemon) {
-        trainerController.removePokemonFromTrainer(trainer, pokemon);
-        trainerController.removePokemonFromTrainer(otherTrainer, otherPokemon);
+    public void acceptTradeOffer(@Nonnull Offer tradeOffer) {
+        trainerController.removePokemonFromTrainer(
+                tradeOffer.getTrainerId(), tradeOffer.getPokemonId());
+        trainerController.removePokemonFromTrainer(
+                tradeOffer.getOtherTrainerId(), tradeOffer.getOtherPokemonId());
 
-        trainerController.addPokemonToTrainer(trainer, otherPokemon);
-        trainerController.addPokemonToTrainer(otherTrainer, pokemon);
+        trainerController.addPokemonToTrainer(
+                tradeOffer.getTrainerId(), tradeOffer.getOtherPokemonId());
+        trainerController.addPokemonToTrainer(
+                tradeOffer.getOtherTrainerId(), tradeOffer.getPokemonId());
     }
 }
