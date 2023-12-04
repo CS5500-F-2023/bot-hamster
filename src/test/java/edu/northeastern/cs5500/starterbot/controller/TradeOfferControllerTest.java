@@ -44,9 +44,12 @@ class TradeOfferControllerTest {
         TradeOfferController tradeOfferController = getTradeOfferController(trainerController);
 
         Trainer trainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_1);
+        Trainer otherTrainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_2);
         Pokemon pokemon =
                 pokemonController.getPokemonByObjectId(trainer.getPokemonInventory().get(0));
-        tradeOfferController.createNewOffering(trainer, pokemon);
+        Pokemon otherPokemon =
+                pokemonController.getPokemonByObjectId(otherTrainer.getPokemonInventory().get(0));
+        tradeOfferController.createNewOffering(trainer, pokemon, otherTrainer, otherPokemon);
     }
 
     @Test
@@ -60,8 +63,10 @@ class TradeOfferControllerTest {
         Pokemon pokemon =
                 pokemonController.getPokemonById(
                         otherTrainer.getPokemonInventory().get(0).toString());
+        Pokemon otherPokemon =
+                pokemonController.getPokemonByObjectId(otherTrainer.getPokemonInventory().get(0));
         try {
-            tradeOfferController.createNewOffering(trainer, pokemon);
+            tradeOfferController.createNewOffering(trainer, pokemon, otherTrainer, otherPokemon);
             fail("Expected IllegalStateException");
         } catch (IllegalStateException e) {
             // expected

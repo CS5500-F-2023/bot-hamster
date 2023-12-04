@@ -72,8 +72,7 @@ public class HealCommand implements SlashCommandHandler, StringSelectHandler {
                     .setEphemeral(false)
                     .queue();
         } else {
-            embedBuilder.setFooter(
-                    String.format("There is no Pokemon in your team 👀 Use /catch to get one 🤩"));
+            embedBuilder.setFooter("There is no Pokemon in your team 👀 Use /catch to get one 🤩");
             event.replyEmbeds(embedBuilder.build()).queue();
         }
     }
@@ -120,7 +119,7 @@ public class HealCommand implements SlashCommandHandler, StringSelectHandler {
             embedBuilder.setTitle("Congratulations 🎉🎉🎉");
             embedBuilder.setDescription(
                     String.format(
-                            "Your Pokemon %s is now level %s! \n Use /home to reveal your Pokemon's new stats 🔍",
+                            "Your Pokemon %s is now level %s! %n Use /home to reveal your Pokemon's new stats 🔍",
                             response, pokemon.getLevel()));
 
             // Send the additional embedded message
