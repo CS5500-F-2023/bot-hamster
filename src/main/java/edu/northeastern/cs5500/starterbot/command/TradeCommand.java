@@ -1,8 +1,8 @@
 package edu.northeastern.cs5500.starterbot.command;
 
+import edu.northeastern.cs5500.starterbot.controller.OfferController;
 import edu.northeastern.cs5500.starterbot.controller.PokedexController;
 import edu.northeastern.cs5500.starterbot.controller.PokemonController;
-import edu.northeastern.cs5500.starterbot.controller.TradeOfferController;
 import edu.northeastern.cs5500.starterbot.controller.TrainerController;
 import edu.northeastern.cs5500.starterbot.model.Pokemon;
 import edu.northeastern.cs5500.starterbot.model.PokemonSpecies;
@@ -33,7 +33,7 @@ public class TradeCommand implements SlashCommandHandler, StringSelectHandler, B
 
     @Inject TrainerController trainerController;
 
-    @Inject TradeOfferController tradeOfferController;
+    @Inject OfferController tradeOfferController;
 
     @Inject
     public TradeCommand() {
@@ -174,7 +174,7 @@ public class TradeCommand implements SlashCommandHandler, StringSelectHandler, B
             event.reply(String.format("Player <@%s> decline the trade offer.", otherTrainerId))
                     .queue();
         } else if (event.getButton().getId().startsWith(getName() + ":accept:")) {
-            tradeOfferController.acceptOffer(
+            tradeOfferController.acceptTradeOffer(
                     trainerDiscordId, pokemonId, otherTrainerId, otherTrainerPokemonId);
             event.reply("Trade success! Use /home to reveal your new Pokemon 🔍").queue();
         }

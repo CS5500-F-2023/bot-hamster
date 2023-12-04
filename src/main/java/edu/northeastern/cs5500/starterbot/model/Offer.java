@@ -5,12 +5,12 @@ import lombok.Data;
 import org.bson.types.ObjectId;
 
 @Data
-public class TradeOffer {
+public class Offer {
     @Nonnull ObjectId trainerId;
 
-    @Nonnull ObjectId pokemonId;
-
     @Nonnull ObjectId otherTrainerId;
+
+    @Nonnull ObjectId pokemonId;
 
     @Nonnull ObjectId otherPokemonId;
 }

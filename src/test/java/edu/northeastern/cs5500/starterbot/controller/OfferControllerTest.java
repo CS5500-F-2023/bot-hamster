@@ -6,7 +6,7 @@ import edu.northeastern.cs5500.starterbot.model.Trainer;
 import edu.northeastern.cs5500.starterbot.repository.InMemoryRepository;
 import org.junit.jupiter.api.Test;
 
-class TradeOfferControllerTest {
+class OfferControllerTest {
     final String DISCORD_USER_ID_1 = "discordUserId1";
     final String DISCORD_USER_ID_2 = "discordUserId2";
 
@@ -14,8 +14,8 @@ class TradeOfferControllerTest {
         return new PokemonController(new InMemoryRepository<>());
     }
 
-    TradeOfferController getTradeOfferController(TrainerController trainerController) {
-        TradeOfferController tradeOfferController = new TradeOfferController(trainerController);
+    OfferController getTradeOfferController(TrainerController trainerController) {
+        OfferController tradeOfferController = new OfferController(trainerController);
         return tradeOfferController;
     }
 
@@ -34,8 +34,8 @@ class TradeOfferControllerTest {
         return trainerController;
     }
 
-    TradeOfferController getTradeOfferController() {
-        TradeOfferController tradeOfferController = new TradeOfferController(null);
+    OfferController getTradeOfferController() {
+        OfferController tradeOfferController = new OfferController(null);
         return tradeOfferController;
     }
 
@@ -43,7 +43,7 @@ class TradeOfferControllerTest {
     void testThatTrainersCanTradePokemonTheyHave() {
         PokemonController pokemonController = getPokemonController();
         TrainerController trainerController = getTrainerController(pokemonController);
-        TradeOfferController tradeOfferController = getTradeOfferController(trainerController);
+        OfferController tradeOfferController = getTradeOfferController(trainerController);
 
         Trainer trainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_1);
         Trainer otherTrainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_2);
@@ -51,7 +51,7 @@ class TradeOfferControllerTest {
         String trainerPokemon = trainer.getPokemonInventory().get(0).toString();
         String otherTrainerPokemon = otherTrainer.getPokemonInventory().get(0).toString();
 
-        tradeOfferController.acceptOffer(
+        tradeOfferController.acceptTradeOffer(
                 DISCORD_USER_ID_1, trainerPokemon, DISCORD_USER_ID_2, otherTrainerPokemon);
         assertThat(trainer.getPokemonInventory().get(0).toString()).isEqualTo(otherTrainerPokemon);
         assertThat(otherTrainer.getPokemonInventory().get(0).toString()).isEqualTo(trainerPokemon);
