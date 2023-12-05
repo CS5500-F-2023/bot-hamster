@@ -1,6 +1,7 @@
 package edu.northeastern.cs5500.starterbot.model;
 
 import static com.google.common.truth.Truth.assertThat;
+
 import javax.annotation.Nonnull;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,7 @@ class PokemonSpeciesTest {
     @Test
     void testPokemonSpeciesConstructor() {
         PokemonSpecies pokemonSpecies = new PokemonSpecies(pokedexNumber, imageUrl, name);
-        
+
         assertThat(pokemonSpecies.getPokedexNumber()).isEqualTo(pokedexNumber);
         assertThat(pokemonSpecies.getImageUrl()).isEqualTo(imageUrl);
         assertThat(pokemonSpecies.getName()).isEqualTo(name);
@@ -41,7 +42,7 @@ class PokemonSpeciesTest {
     @Test
     void testGettersAndSetters() {
         PokemonSpecies pokemonSpecies = new PokemonSpecies(pokedexNumber, imageUrl, name);
-        
+
         assertThat(pokemonSpecies.getPokedexNumber()).isEqualTo(pokedexNumber);
         assertThat(pokemonSpecies.getImageUrl()).isEqualTo(imageUrl);
         assertThat(pokemonSpecies.getName()).isEqualTo(name);

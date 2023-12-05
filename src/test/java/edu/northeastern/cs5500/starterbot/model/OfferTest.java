@@ -1,6 +1,7 @@
 package edu.northeastern.cs5500.starterbot.model;
 
 import static com.google.common.truth.Truth.assertThat;
+
 import org.junit.jupiter.api.Test;
 
 public class OfferTest {
@@ -18,5 +19,4 @@ public class OfferTest {
         assertThat(offer.getPokemonId()).isEqualTo(pokemonId);
         assertThat(offer.getOtherPokemonId()).isEqualTo(otherPokemonId);
     }
-    
 }

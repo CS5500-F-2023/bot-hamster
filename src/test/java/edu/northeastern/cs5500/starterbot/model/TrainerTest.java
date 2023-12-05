@@ -2,11 +2,10 @@ package edu.northeastern.cs5500.starterbot.model;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import org.bson.types.ObjectId;
-import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
-
+import org.bson.types.ObjectId;
+import org.junit.jupiter.api.Test;
 
 class TrainerTest {
 
@@ -17,14 +16,15 @@ class TrainerTest {
         String discordUserId = "123456789";
         int pokeBallQuantity = 5;
         int coinBalance = 100;
-        List<ObjectId> pokemonInventory = Arrays.asList(new ObjectId(), new ObjectId(), new ObjectId());
+        List<ObjectId> pokemonInventory =
+                Arrays.asList(new ObjectId(), new ObjectId(), new ObjectId());
 
         trainer.setId(id);
         trainer.setDiscordUserId(discordUserId);
         trainer.setPokeBallQuantity(pokeBallQuantity);
         trainer.setCoinBalance(coinBalance);
         trainer.setPokemonInventory(pokemonInventory);
-        
+
         assertThat(trainer.getId()).isEqualTo(id);
         assertThat(trainer.getDiscordUserId()).isEqualTo(discordUserId);
         assertThat(trainer.getPokeBallQuantity()).isEqualTo(pokeBallQuantity);
