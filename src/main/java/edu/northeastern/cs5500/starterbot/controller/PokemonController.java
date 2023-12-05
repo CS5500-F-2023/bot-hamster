@@ -43,14 +43,13 @@ public class PokemonController {
         String pokemonData = getPokemonData(pokedexNumber);
         String[] pokemonDataArray = pokemonData.split(",");
 
-        int hp = Integer.parseInt(pokemonDataArray[4]);
-        int attack = Integer.parseInt(pokemonDataArray[5]);
-        int defense = Integer.parseInt(pokemonDataArray[6]);
-        int specialAttack = Integer.parseInt(pokemonDataArray[7]);
-        int specialDefense = Integer.parseInt(pokemonDataArray[8]);
-        int speed = Integer.parseInt(pokemonDataArray[9]);
-        int mood = Integer.parseInt(pokemonDataArray[10]);
-        int total = Integer.parseInt(pokemonDataArray[3]);
+        int hp = Integer.parseInt(pokemonDataArray[3]);
+        int attack = Integer.parseInt(pokemonDataArray[4]);
+        int defense = Integer.parseInt(pokemonDataArray[5]);
+        int specialAttack = Integer.parseInt(pokemonDataArray[6]);
+        int specialDefense = Integer.parseInt(pokemonDataArray[7]);
+        int speed = Integer.parseInt(pokemonDataArray[8]);
+        int total = Integer.parseInt(pokemonDataArray[2]);
 
         PokemonBuilder builder = Pokemon.builder();
         builder.pokedexNumber(pokedexNumber)
@@ -60,7 +59,6 @@ public class PokemonController {
                 .specialAttack(specialAttack)
                 .specialDefense(specialDefense)
                 .speed(speed)
-                .mood(mood)
                 .total(total);
 
         Pokemon pokemon = Objects.requireNonNull(builder.build());

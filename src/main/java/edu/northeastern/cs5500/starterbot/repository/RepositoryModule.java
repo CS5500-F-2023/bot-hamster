@@ -3,7 +3,6 @@ package edu.northeastern.cs5500.starterbot.repository;
 import dagger.Module;
 import dagger.Provides;
 import edu.northeastern.cs5500.starterbot.model.Pokemon;
-import edu.northeastern.cs5500.starterbot.model.TradeOffer;
 import edu.northeastern.cs5500.starterbot.model.Trainer;
 import edu.northeastern.cs5500.starterbot.model.UserPreference;
 
@@ -37,17 +36,6 @@ public class RepositoryModule {
     @Provides
     public GenericRepository<UserPreference> provideUserPreferencesRepository(
             MongoDBRepository<UserPreference> repository) {
-        return repository;
-    }
-
-    @Provides
-    public Class<TradeOffer> provideTradeOffer() {
-        return TradeOffer.class;
-    }
-
-    @Provides
-    public GenericRepository<TradeOffer> provideTradeOfferRepository(
-            MongoDBRepository<TradeOffer> repository) {
         return repository;
     }
 

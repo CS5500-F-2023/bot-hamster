@@ -111,7 +111,7 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
             event.reply(
                             String.format(
                                     "Pokemon %s already in the inventory! Try again!",
-                                    species.getName(), trainerDiscordId))
+                                    species.getName()))
                     .queue();
         } else {
             trainerController.addPokemonToTrainer(trainerDiscordId, pokemonId);
@@ -145,7 +145,7 @@ public class CatchCommand implements SlashCommandHandler, ButtonHandler {
             event.reply(
                             String.format(
                                     "Pokemon %s already in the inventory! Try again!",
-                                    species.getName(), trainerDiscordId))
+                                    species.getName()))
                     .queue();
         } else if (randomPokemon != null) {
             if (randomPokemon.getTotal() > pokemonStatsTotal) {

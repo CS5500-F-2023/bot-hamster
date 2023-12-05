@@ -1,18 +1,23 @@
 package edu.northeastern.cs5500.starterbot.controller;
 
-import static org.junit.Assert.fail;
+import static com.google.common.truth.Truth.assertThat;
 
-import edu.northeastern.cs5500.starterbot.model.Pokemon;
+import edu.northeastern.cs5500.starterbot.model.Offer;
 import edu.northeastern.cs5500.starterbot.model.Trainer;
 import edu.northeastern.cs5500.starterbot.repository.InMemoryRepository;
 import org.junit.jupiter.api.Test;
 
-class TradeOfferControllerTest {
+class OfferControllerTest {
     final String DISCORD_USER_ID_1 = "discordUserId1";
     final String DISCORD_USER_ID_2 = "discordUserId2";
 
     PokemonController getPokemonController() {
         return new PokemonController(new InMemoryRepository<>());
+    }
+
+    OfferController getOfferController(TrainerController trainerController) {
+        OfferController tradeOfferController = new OfferController(trainerController);
+        return tradeOfferController;
     }
 
     TrainerController getTrainerController(PokemonController pokemonController) {
@@ -30,41 +35,31 @@ class TradeOfferControllerTest {
         return trainerController;
     }
 
-    TradeOfferController getTradeOfferController(TrainerController trainerController) {
-        TradeOfferController tradeOfferController =
-                new TradeOfferController(new InMemoryRepository<>(), trainerController);
-
+    OfferController getOfferController() {
+        OfferController tradeOfferController = new OfferController(null);
         return tradeOfferController;
     }
 
     @Test
-    void testThatTrainersCanOfferPokemonTheyHave() {
+    void testThatTrainersCanTradePokemonTheyHave() {
         PokemonController pokemonController = getPokemonController();
         TrainerController trainerController = getTrainerController(pokemonController);
-        TradeOfferController tradeOfferController = getTradeOfferController(trainerController);
-
-        Trainer trainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_1);
-        Pokemon pokemon =
-                pokemonController.getPokemonByObjectId(trainer.getPokemonInventory().get(0));
-        tradeOfferController.createNewOffering(trainer, pokemon);
-    }
-
-    @Test
-    void testThatTrainersCanOnlyOfferPokemonTheyHave() {
-        PokemonController pokemonController = getPokemonController();
-        TrainerController trainerController = getTrainerController(pokemonController);
-        TradeOfferController tradeOfferController = getTradeOfferController(trainerController);
+        OfferController tradeOfferController = getOfferController(trainerController);
 
         Trainer trainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_1);
         Trainer otherTrainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_2);
-        Pokemon pokemon =
-                pokemonController.getPokemonById(
-                        otherTrainer.getPokemonInventory().get(0).toString());
-        try {
-            tradeOfferController.createNewOffering(trainer, pokemon);
-            fail("Expected IllegalStateException");
-        } catch (IllegalStateException e) {
-            // expected
-        }
+
+        String trainerPokemon = trainer.getPokemonInventory().get(0).toString();
+        String otherTrainerPokemon = otherTrainer.getPokemonInventory().get(0).toString();
+
+        Offer tradeOffer =
+                new Offer(
+                        DISCORD_USER_ID_1, DISCORD_USER_ID_2, trainerPokemon, otherTrainerPokemon);
+        tradeOfferController.acceptTradeOffer(tradeOffer);
+
+        assertThat(trainer.getPokemonInventory().get(0).toString())
+                .isEqualTo(tradeOffer.getOtherPokemonId());
+        assertThat(otherTrainer.getPokemonInventory().get(0).toString())
+                .isEqualTo(tradeOffer.getPokemonId());
     }
 }

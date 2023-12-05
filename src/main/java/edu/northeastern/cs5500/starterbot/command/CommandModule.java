@@ -123,6 +123,13 @@ public class CommandModule {
 
     @Provides
     @IntoMap
+    @StringKey(TradeCommand.NAME)
+    public ButtonHandler provideTradeCommandClickHandler(TradeCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
     @StringKey(RulesCommand.NAME)
     public SlashCommandHandler provideRulesCommand(RulesCommand command) {
         return command;
