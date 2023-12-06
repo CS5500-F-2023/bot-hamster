@@ -37,11 +37,15 @@ class TrainerControllerTest {
 
     @Test
     void testAddPokemonToTrainer() {
+        // precondition
         PokemonController pokemonController = getPokemonController();
         TrainerController trainerController = getTrainerController(pokemonController);
 
+        // mutation
         String caughtPokemonId = pokemonController.catchPokemon(1).getId().toString();
         trainerController.addPokemonToTrainer(DISCORD_USER_ID_1, caughtPokemonId);
+
+        // postcondition
         Trainer trainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_1);
         List<ObjectId> pokemonIds = trainer.getPokemonInventory();
 
@@ -80,9 +84,11 @@ class TrainerControllerTest {
 
     @Test
     void testRemovePokemonFromTrainerWithTrainerAndPokemon() {
+        // precondition
         PokemonController pokemonController = getPokemonController();
         TrainerController trainerController = getTrainerController(pokemonController);
 
+        // mutation
         Pokemon caughtPokemon = pokemonController.catchPokemon(1);
         String caughtPokemonId = caughtPokemon.getId().toString();
         trainerController.addPokemonToTrainer(DISCORD_USER_ID_1, caughtPokemonId);
@@ -91,6 +97,7 @@ class TrainerControllerTest {
         trainerController.removePokemonFromTrainer(trainer, caughtPokemon);
         Trainer updatedTrainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_1);
 
+        // postcondition
         assertThat(updatedTrainer.getPokemonInventory()).doesNotContain(caughtPokemonId);
     }
 
