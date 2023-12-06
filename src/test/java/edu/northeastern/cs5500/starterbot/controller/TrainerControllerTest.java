@@ -1,7 +1,9 @@
 package edu.northeastern.cs5500.starterbot.controller;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import edu.northeastern.cs5500.starterbot.model.Pokemon;
 import edu.northeastern.cs5500.starterbot.model.Trainer;
 import edu.northeastern.cs5500.starterbot.repository.InMemoryRepository;
 import java.util.List;
@@ -35,15 +37,19 @@ class TrainerControllerTest {
 
     @Test
     void testAddPokemonToTrainer() {
+        // precondition
         PokemonController pokemonController = getPokemonController();
         TrainerController trainerController = getTrainerController(pokemonController);
 
+        // mutation
         String caughtPokemonId = pokemonController.catchPokemon(1).getId().toString();
         trainerController.addPokemonToTrainer(DISCORD_USER_ID_1, caughtPokemonId);
+
+        // postcondition
         Trainer trainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_1);
         List<ObjectId> pokemonIds = trainer.getPokemonInventory();
 
-        assertThat(pokemonIds.contains(new ObjectId(caughtPokemonId)));
+        assertThat(pokemonIds.contains(caughtPokemonId));
     }
 
     @Test
@@ -63,5 +69,48 @@ class TrainerControllerTest {
 
         trainerController.updateCoinBalanceForTrainer(DISCORD_USER_ID_1, -25);
         assertThat(trainerController.getCoinBalanceFromTrainer(DISCORD_USER_ID_1)).isEqualTo(75);
+    }
+
+    @Test
+    void testGetTrainerForId() {
+        PokemonController pokemonController = getPokemonController();
+        TrainerController trainerController = getTrainerController(pokemonController);
+        Trainer expectedTrainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_1);
+        ObjectId trainerId = expectedTrainer.getId();
+
+        assertThat(trainerController.getTrainerForId(trainerId))
+                .isEqualTo(trainerController.getTrainerForMemberId(DISCORD_USER_ID_1));
+    }
+
+    @Test
+    void testRemovePokemonFromTrainerWithTrainerAndPokemon() {
+        // precondition
+        PokemonController pokemonController = getPokemonController();
+        TrainerController trainerController = getTrainerController(pokemonController);
+
+        // mutation
+        Pokemon caughtPokemon = pokemonController.catchPokemon(1);
+        String caughtPokemonId = caughtPokemon.getId().toString();
+        trainerController.addPokemonToTrainer(DISCORD_USER_ID_1, caughtPokemonId);
+
+        Trainer trainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_1);
+        trainerController.removePokemonFromTrainer(trainer, caughtPokemon);
+        Trainer updatedTrainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_1);
+
+        // postcondition
+        assertThat(updatedTrainer.getPokemonInventory()).doesNotContain(caughtPokemonId);
+    }
+
+    @Test
+    void testRemovePokemonFromTrainerWhenPokemonNotInInventory() {
+        PokemonController pokemonController = getPokemonController();
+        TrainerController trainerController = getTrainerController(pokemonController);
+
+        Pokemon caughtPokemon = pokemonController.catchPokemon(1);
+        Trainer trainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_1);
+
+        assertThrows(
+                IllegalStateException.class,
+                () -> trainerController.removePokemonFromTrainer(trainer, caughtPokemon));
     }
 }
