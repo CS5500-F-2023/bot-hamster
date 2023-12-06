@@ -1,12 +1,12 @@
 package edu.northeastern.cs5500.starterbot.model;
 
+import javax.annotation.Nonnull;
 import lombok.Data;
-import org.bson.types.ObjectId;
 
 @Data
 public class Battle {
-    ObjectId trainer;
-    ObjectId opponent;
-    ObjectId myPokemon;
-    ObjectId opponentPokemon;
+    @Nonnull String trainer;
+    @Nonnull String opponent;
+    @Nonnull String myPokemon;
+    @Nonnull String opponentPokemon;
 }
