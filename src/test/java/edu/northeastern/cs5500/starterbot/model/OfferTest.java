@@ -1,6 +1,7 @@
 package edu.northeastern.cs5500.starterbot.model;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
@@ -16,10 +17,10 @@ public class OfferTest {
     final String newPokemonId = "pokemon3";
     final String newOtherPokemonId = "pokemon4";
 
+    Offer offer = new Offer("trainer1", "trainer2", "pokemon1", "pokemon2");
+
     @Test
     void testOfferCreation() {
-        Offer offer = new Offer(trainerId, otherTrainerId, pokemonId, otherPokemonId);
-
         assertThat(offer.getTrainerId()).isEqualTo(trainerId);
         assertThat(offer.getOtherTrainerId()).isEqualTo(otherTrainerId);
         assertThat(offer.getPokemonId()).isEqualTo(pokemonId);
@@ -28,8 +29,6 @@ public class OfferTest {
 
     @Test
     void testOfferSetters() {
-        Offer offer = new Offer(trainerId, otherTrainerId, pokemonId, otherPokemonId);
-
         offer.setTrainerId(newTrainerId);
         offer.setOtherTrainerId(newOtherTrainerId);
         offer.setPokemonId(newPokemonId);
@@ -43,8 +42,6 @@ public class OfferTest {
 
     @Test
     void testSetTrainerIdNullValue() {
-        Offer offer = new Offer("trainer1", "trainer2", "pokemon1", "pokemon2");
-
         try {
             offer.setTrainerId(null);
             fail("Expected NullPointerException");
@@ -55,8 +52,6 @@ public class OfferTest {
 
     @Test
     void testSetOtherTrainerIdNullValue() {
-        Offer offer = new Offer("trainer1", "trainer2", "pokemon1", "pokemon2");
-
         try {
             offer.setOtherTrainerId(null);
             fail("Expected NullPointerException");
@@ -67,8 +62,6 @@ public class OfferTest {
 
     @Test
     void testSetPokemonIdNullValue() {
-        Offer offer = new Offer("trainer1", "trainer2", "pokemon1", "pokemon2");
-
         try {
             offer.setPokemonId(null);
             fail("Expected NullPointerException");
@@ -79,13 +72,34 @@ public class OfferTest {
 
     @Test
     void testSetOtherPokemonIdNullValue() {
-        Offer offer = new Offer("trainer1", "trainer2", "pokemon1", "pokemon2");
-
         try {
             offer.setOtherPokemonId(null);
             fail("Expected NullPointerException");
         } catch (NullPointerException e) {
             assertThat(e.getMessage()).isEqualTo("otherPokemonId is marked non-null but is null");
         }
+    }
+
+    @Test
+    void testEquals_comparisonToSelf() {
+        assertThat(offer).isEqualTo(offer);
+    }
+
+    @Test
+    void testEquals_nullComparison() {
+        assertThat(offer).isNotEqualTo(null);
+    }
+
+    @Test
+    void testEquals_differentDataTypes() {
+        Object differentOffer = new Object();
+        assertThat(offer).isNotEqualTo(differentOffer);
+    }
+
+    @Test
+    void testToString() {
+        String expectedString =
+                "Offer(trainerId=trainer1, otherTrainerId=trainer2, pokemonId=pokemon1, otherPokemonId=pokemon2)";
+        assertEquals(expectedString, offer.toString());
     }
 }

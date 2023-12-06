@@ -1,31 +1,37 @@
 package edu.northeastern.cs5500.starterbot.model;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import org.bson.types.ObjectId;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class PokemonTest {
-    ObjectId pokemonId = new ObjectId();
+class PokemonTest {
+    private ObjectId pokemonId;
+    private Pokemon pokemon;
 
-    Pokemon pokemon =
-            Pokemon.builder()
-                    .pokedexNumber(1)
-                    .hp(100)
-                    .attack(50)
-                    .defense(30)
-                    .specialAttack(40)
-                    .specialDefense(30)
-                    .speed(60)
-                    .total(250)
-                    .build();
+    @BeforeEach
+    void setUp() {
+        pokemonId = new ObjectId("657015b9b3389c20f3a52d74");
+        pokemon =
+                Pokemon.builder()
+                        .pokedexNumber(1)
+                        .hp(100)
+                        .attack(50)
+                        .defense(30)
+                        .specialAttack(40)
+                        .specialDefense(30)
+                        .speed(60)
+                        .total(250)
+                        .build();
+        pokemon.setId(pokemonId);
+        pokemon.setPokedexNumber(10);
+    }
 
     @Test
     void testPokemonBuilder() {
-        pokemon.setId(pokemonId);
-        pokemon.setPokedexNumber(10);
-
         assertThat(pokemon.getId()).isEqualTo(pokemonId);
         assertThat(pokemon.getPokedexNumber()).isEqualTo(10);
         // Default Value
@@ -128,5 +134,28 @@ public class PokemonTest {
         } catch (NullPointerException e) {
             assertThat(e.getMessage()).isEqualTo("total is marked non-null but is null");
         }
+    }
+
+    @Test
+    void testEquals_comparisonToSelf() {
+        assertThat(pokemon).isEqualTo(pokemon);
+    }
+
+    @Test
+    void testEquals_nullComparison() {
+        assertThat(pokemon).isNotEqualTo(null);
+    }
+
+    @Test
+    void testEquals_differentDataTypes() {
+        Object differentPokemon = new Object();
+        assertThat(pokemon).isNotEqualTo(differentPokemon);
+    }
+
+    @Test
+    void testToString() {
+        String expectedString =
+                "Pokemon(id=657015b9b3389c20f3a52d74, pokedexNumber=10, level=0, mood=0, hp=100, attack=50, defense=30, specialAttack=40, specialDefense=30, speed=60, total=250)";
+        assertEquals(expectedString, pokemon.toString());
     }
 }
