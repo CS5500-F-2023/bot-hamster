@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 public class Battle {
-    @Nonnull String trainer;
-    @Nonnull String opponent;
-    @Nonnull String myPokemon;
-    @Nonnull String opponentPokemon;
+    @Nonnull String trainerId;
+    @Nonnull String opponentId;
+    @Nonnull String myPokemonId;
+    @Nonnull String opponentPokemonId;
 }

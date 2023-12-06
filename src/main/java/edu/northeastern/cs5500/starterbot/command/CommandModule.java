@@ -176,4 +176,18 @@ public class CommandModule {
     public SlashCommandHandler provideBattleCommand(BattleCommand command) {
         return command;
     }
+
+    @Provides
+    @IntoMap
+    @StringKey(BattleCommand.NAME)
+    public StringSelectHandler provideBattleCommandMenuHandler(BattleCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey(BattleCommand.NAME)
+    public ButtonHandler provideBattleCommandClickHandler(BattleCommand command) {
+        return command;
+    }
 }

@@ -4,6 +4,7 @@ import edu.northeastern.cs5500.starterbot.controller.BattleController;
 import edu.northeastern.cs5500.starterbot.controller.PokedexController;
 import edu.northeastern.cs5500.starterbot.controller.PokemonController;
 import edu.northeastern.cs5500.starterbot.controller.TrainerController;
+import edu.northeastern.cs5500.starterbot.model.Battle;
 import edu.northeastern.cs5500.starterbot.model.Pokemon;
 import edu.northeastern.cs5500.starterbot.model.PokemonSpecies;
 import java.util.Collection;
@@ -143,7 +144,7 @@ public class BattleCommand implements SlashCommandHandler, StringSelectHandler, 
 
         String buttonRespondent = event.getMember().getId();
         String myDiscordId = event.getButton().getId().split(":")[2];
-        String opponentDiscordId = event.getButton().getId().split(":")[4];
+        String opponentDiscordId = event.getButton().getId().split(":")[3];
         String pokemonId = event.getButton().getId().split(":")[4];
         EmbedBuilder embedBuilder = new EmbedBuilder();
 
@@ -151,27 +152,8 @@ public class BattleCommand implements SlashCommandHandler, StringSelectHandler, 
             if (event.getButton().getId().startsWith(getName() + ":decline:")) {
                 event.reply(String.format("<@%s> declined the battle.", opponentDiscordId)).queue();
             } else if (event.getButton().getId().startsWith(getName() + ":accept:")) {
-                StringSelectMenu.Builder menu =
-                        StringSelectMenu.create(NAME).setPlaceholder("Choose Pokemon");
-                for (String pokemon :
-                        trainerController.getPokemonNamesFromTrainerInventory(opponentDiscordId)) {
-                    menu.addOption(pokemon, String.format("%s:%s", pokemon, opponentDiscordId));
-                }
-
-                event.replyEmbeds(embedBuilder.build())
-                        .addActionRow(menu.build())
-                        .setEphemeral(false)
-                        .queue();
-
-                // String battleResult = battleController.compareTotal(myDiscordId,
-                // opponentDiscordId);
-                // embedBuilder.setDescription(
-                //         String.format("<@%s> ", myDiscordId)
-                //                 + String.format("vs <@%s>", opponentDiscordId)
-                //                 + "\n\n"
-                //                 + String.format("Winner is <@%s>!", battleResult));
-
-                event.reply("Battle result").queue();
+                Battle currentBattle =
+                        new Battle(myDiscordId, opponentDiscordId, pokemonId, pokemonId);
             }
         } else {
             event.reply("Sorry, you cannot respond to this battle request.").queue();
