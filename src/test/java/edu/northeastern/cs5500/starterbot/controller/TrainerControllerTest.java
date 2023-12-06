@@ -74,7 +74,8 @@ class TrainerControllerTest {
         Trainer expectedTrainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_1);
         ObjectId trainerId = expectedTrainer.getId();
 
-        assertThat(trainerController.getTrainerForId(trainerId)).isEqualTo(trainerController.getTrainerForMemberId(DISCORD_USER_ID_1));
+        assertThat(trainerController.getTrainerForId(trainerId))
+                .isEqualTo(trainerController.getTrainerForMemberId(DISCORD_USER_ID_1));
     }
 
     @Test
@@ -101,6 +102,8 @@ class TrainerControllerTest {
         Pokemon caughtPokemon = pokemonController.catchPokemon(1);
         Trainer trainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_1);
 
-        assertThrows(IllegalStateException.class, () -> trainerController.removePokemonFromTrainer(trainer, caughtPokemon));
+        assertThrows(
+                IllegalStateException.class,
+                () -> trainerController.removePokemonFromTrainer(trainer, caughtPokemon));
     }
 }

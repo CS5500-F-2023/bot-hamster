@@ -25,7 +25,7 @@ class TrainerTest {
     @BeforeEach
     void setUp() {
         trainer = new Trainer();
-    
+
         trainer.setId(id);
         trainer.setDiscordUserId(discordUserId);
         trainer.setPokeBallQuantity(pokeBallQuantity);
