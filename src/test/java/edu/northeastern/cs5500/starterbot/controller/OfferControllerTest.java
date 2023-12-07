@@ -42,21 +42,25 @@ class OfferControllerTest {
 
     @Test
     void testThatTrainersCanTradePokemonTheyHave() {
+        // setup
         PokemonController pokemonController = getPokemonController();
         TrainerController trainerController = getTrainerController(pokemonController);
         OfferController tradeOfferController = getOfferController(trainerController);
 
+        // precondition
         Trainer trainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_1);
         Trainer otherTrainer = trainerController.getTrainerForMemberId(DISCORD_USER_ID_2);
 
         String trainerPokemon = trainer.getPokemonInventory().get(0).toString();
         String otherTrainerPokemon = otherTrainer.getPokemonInventory().get(0).toString();
 
+        // mutation
         Offer tradeOffer =
                 new Offer(
                         DISCORD_USER_ID_1, DISCORD_USER_ID_2, trainerPokemon, otherTrainerPokemon);
         tradeOfferController.acceptTradeOffer(tradeOffer);
 
+        // postcondition
         assertThat(trainer.getPokemonInventory().get(0).toString())
                 .isEqualTo(tradeOffer.getOtherPokemonId());
         assertThat(otherTrainer.getPokemonInventory().get(0).toString())
