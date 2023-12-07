@@ -7,24 +7,19 @@ import edu.northeastern.cs5500.starterbot.controller.TrainerController;
 import edu.northeastern.cs5500.starterbot.model.Battle;
 import edu.northeastern.cs5500.starterbot.model.Pokemon;
 import edu.northeastern.cs5500.starterbot.model.PokemonSpecies;
-import java.util.Collection;
-import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
-import org.bson.types.ObjectId;
 
 @Slf4j
-public class BattleCommand implements SlashCommandHandler, StringSelectHandler, ButtonHandler {
+public class BattleCommand implements SlashCommandHandler, ButtonHandler {
 
     static final String NAME = "battle";
     static final String IMAGE =
@@ -59,84 +54,35 @@ public class BattleCommand implements SlashCommandHandler, StringSelectHandler, 
 
         String myDiscordId = event.getMember().getId();
         String opponentDiscordId = event.getOption("trainer").getAsMember().getId();
-        Collection<String> curTeam =
-                trainerController.getPokemonNamesFromTrainerInventory(myDiscordId);
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
 
         if (battleController.battleWithSelf(myDiscordId, opponentDiscordId)) {
-            embedBuilder.setDescription("Trainer must choose someone else for battle");
+            embedBuilder.setDescription("Trainer must choose other trainers for battle");
             event.replyEmbeds(embedBuilder.build()).queue();
         } else if (!battleController.validateBattleTeam(myDiscordId)
                 || !battleController.validateBattleTeam(opponentDiscordId)) {
             embedBuilder.setDescription("Trainers must have at least one Pokemon for battle");
             event.replyEmbeds(embedBuilder.build()).queue();
         } else {
-            StringSelectMenu.Builder menu =
-                    StringSelectMenu.create(NAME).setPlaceholder("Choose Pokemon");
-
-            for (String pokemon : curTeam) {
-                menu.addOption(pokemon, String.format("%s:%s", pokemon, opponentDiscordId));
-            }
 
             embedBuilder.setTitle("Pokemon Battle");
             embedBuilder.setImage(IMAGE);
-            embedBuilder.setDescription("Choose a Pokemon for Battle");
+            embedBuilder.setDescription(
+                    String.format(
+                            "<@%s> is challenging <@%s> for a 1 vs 1 Pokemon battle!",
+                            myDiscordId, opponentDiscordId));
 
             event.replyEmbeds(embedBuilder.build())
-                    .addActionRow(menu.build())
-                    .setEphemeral(false)
+                    .addActionRow(
+                            Button.primary(
+                                    getName() + ":accept:" + myDiscordId + ":" + opponentDiscordId,
+                                    "Accept"),
+                            Button.secondary(
+                                    getName() + ":decline:" + myDiscordId + ":" + opponentDiscordId,
+                                    "Decline"))
                     .queue();
         }
-    }
-
-    @Override
-    public void onStringSelectInteraction(@Nonnull StringSelectInteractionEvent event) {
-
-        String myDiscordId = event.getMember().getId();
-        final String response = event.getInteraction().getValues().get(0);
-        Objects.requireNonNull(response);
-        String[] values = response.split(":");
-        String pokemonName = values[0];
-        String opponentDiscordId = values[1];
-
-        ObjectId pokemonId = trainerController.getPokemonIdByPokemonName(myDiscordId, pokemonName);
-        Pokemon pokemon = pokemonController.getPokemonById(pokemonId.toString());
-
-        String replyMessage =
-                String.format("Battle request sent. Waiting for opponent to respond.");
-
-        event.reply(replyMessage).queue();
-
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle("Attention!");
-        embedBuilder.setDescription(
-                String.format(
-                        "<@%s> is challenging <@%s> for a 1 vs 1 Pokemon battle!",
-                        myDiscordId, opponentDiscordId));
-
-        event.getHook()
-                .sendMessageEmbeds(embedBuilder.build())
-                .addActionRow(
-                        Button.primary(
-                                getName()
-                                        + ":accept:"
-                                        + myDiscordId
-                                        + ":"
-                                        + opponentDiscordId
-                                        + ":"
-                                        + pokemon.getId().toString(),
-                                "Accept"),
-                        Button.secondary(
-                                getName()
-                                        + ":decline:"
-                                        + myDiscordId
-                                        + ":"
-                                        + opponentDiscordId
-                                        + ":"
-                                        + pokemon.getId().toString(),
-                                "Decline"))
-                .queue();
     }
 
     @Override
@@ -145,26 +91,53 @@ public class BattleCommand implements SlashCommandHandler, StringSelectHandler, 
         String buttonRespondent = event.getMember().getId();
         String myDiscordId = event.getButton().getId().split(":")[2];
         String opponentDiscordId = event.getButton().getId().split(":")[3];
-        String pokemonId = event.getButton().getId().split(":")[4];
-        EmbedBuilder embedBuilder = new EmbedBuilder();
 
         if (buttonRespondent.equals(opponentDiscordId)) {
             if (event.getButton().getId().startsWith(getName() + ":decline:")) {
                 event.reply(String.format("<@%s> declined the battle.", opponentDiscordId)).queue();
             } else if (event.getButton().getId().startsWith(getName() + ":accept:")) {
+                EmbedBuilder embedBuilder = new EmbedBuilder();
                 Battle currentBattle =
-                        new Battle(myDiscordId, opponentDiscordId, pokemonId, pokemonId);
+                        battleController.createBattle(myDiscordId, opponentDiscordId);
+                EmbedBuilder myPokemonCard =
+                        createPokemonEmbed(
+                                currentBattle.getMyDiscordId(), currentBattle.getMyPokemonId());
+                EmbedBuilder opponentPokemonCard =
+                        createPokemonEmbed(
+                                currentBattle.getOpponentDiscordId(),
+                                currentBattle.getOpponentPokemonId());
+
+                String battleResult = battleController.compareTotal(currentBattle);
+
+                String resultDescription;
+                if (battleResult.equals("Tie")) {
+                    resultDescription = "The battle ended in a tie!🤝";
+                } else {
+                    resultDescription = String.format("🏵️<@%s> won the battle", battleResult);
+                }
+
+                embedBuilder.setTitle("Battle Result");
+                embedBuilder.setDescription(resultDescription);
+                embedBuilder.setImage(
+                        "https://cl.buscafs.com/www.levelup.com/public/uploads/images/811608/811608.jpg");
+                event.replyEmbeds(
+                                myPokemonCard.build(),
+                                opponentPokemonCard.build(),
+                                embedBuilder.build())
+                        .queue();
             }
         } else {
             event.reply("Sorry, you cannot respond to this battle request.").queue();
         }
     }
 
-    private EmbedBuilder createPokemonEmbed(String trainerDiscordId, Pokemon pokemon) {
+    private EmbedBuilder createPokemonEmbed(String myDiscordId, String pokemonId) {
+
+        Pokemon pokemon = pokemonController.getPokemonById(pokemonId);
         PokemonSpecies species =
                 pokedexController.getPokemonSpeciesByNumber(pokemon.getPokedexNumber());
 
-        String description =
+        String pokemonInfo =
                 String.format(
                         "<@%s>\n\n"
                                 + "**"
@@ -196,8 +169,8 @@ public class BattleCommand implements SlashCommandHandler, StringSelectHandler, 
                                 + "\n"
                                 + "Total: "
                                 + Integer.toString(pokemon.getTotal()),
-                        trainerDiscordId);
+                        myDiscordId);
 
-        return new EmbedBuilder().setDescription(description).setThumbnail(species.getImageUrl());
+        return new EmbedBuilder().setDescription(pokemonInfo).setThumbnail(species.getImageUrl());
     }
 }
