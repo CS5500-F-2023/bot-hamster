@@ -43,7 +43,7 @@ public class PokedexController {
                 String name = data[1];
                 String imageUrl =
                         String.format(
-                                "https://assets.pokemon.com/assets/cms2/img/pokedex/full/%s.png",
+                                "https://assets.pokemon.com/assets/cms2/img/pokedex/full/%03d.png",
                                 pokedexNumber);
 
                 // build PokemonSpecies
