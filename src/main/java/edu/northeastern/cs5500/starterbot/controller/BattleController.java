@@ -44,32 +44,39 @@ public class BattleController {
         return battle;
     }
 
-    public String compareTotal(Battle currenBattle) {
-        String myDiscordId = currenBattle.getMyDiscordId();
-        String opponentDiscordId = currenBattle.getOpponentDiscordId();
-        String myPokemonId = currenBattle.getMyPokemonId();
-        String opponentPokemonId = currenBattle.getOpponentPokemonId();
-        Pokemon myPokemon = pokemonController.getPokemonById(myPokemonId);
-        Pokemon opponentPokemon = pokemonController.getPokemonById(opponentPokemonId);
-
-        if (myPokemon != null && opponentPokemon != null) {
-            if (myPokemon.getTotal() > opponentPokemon.getTotal()) {
-                pokemonController.updatePokemonMood(myPokemon, 2);
-                pokemonController.updatePokemonHPByHalf(myPokemon, -1);
-                pokemonController.updatePokemonHP(opponentPokemon, -opponentPokemon.getHp());
-                return myDiscordId;
-            } else if (myPokemon.getTotal() < opponentPokemon.getTotal()) {
-                pokemonController.updatePokemonMood(opponentPokemon, 2);
-                pokemonController.updatePokemonHPByHalf(opponentPokemon, -1);
-                pokemonController.updatePokemonHP(myPokemon, -myPokemon.getHp());
-                return opponentDiscordId;
+    public String compareTotal(Battle currentBattle) {
+        String myDiscordId = currentBattle.getMyDiscordId();
+        String opponentDiscordId = currentBattle.getOpponentDiscordId();
+        String myPokemonId = currentBattle.getMyPokemonId();
+        String opponentPokemonId = currentBattle.getOpponentPokemonId();
+    
+        try {
+            Pokemon myPokemon = pokemonController.getPokemonById(myPokemonId);
+            Pokemon opponentPokemon = pokemonController.getPokemonById(opponentPokemonId);
+    
+            if (myPokemon != null && opponentPokemon != null) {
+                if (myPokemon.getTotal() > opponentPokemon.getTotal()) {
+                    pokemonController.updatePokemonMood(myPokemon, 2);
+                    pokemonController.updatePokemonHPByHalf(myPokemon, -1);
+                    pokemonController.updatePokemonHP(opponentPokemon, -opponentPokemon.getHp());
+                    return myDiscordId;
+                } else if (myPokemon.getTotal() < opponentPokemon.getTotal()) {
+                    pokemonController.updatePokemonMood(opponentPokemon, 2);
+                    pokemonController.updatePokemonHPByHalf(opponentPokemon, -1);
+                    pokemonController.updatePokemonHP(myPokemon, -myPokemon.getHp());
+                    return opponentDiscordId;
+                } else {
+                    pokemonController.updatePokemonMood(myPokemon, 1);
+                    pokemonController.updatePokemonMood(opponentPokemon, 1);
+                    return "Tie";
+                }
             } else {
-                pokemonController.updatePokemonMood(myPokemon, 1);
-                pokemonController.updatePokemonMood(opponentPokemon, 1);
-                return "Tie";
+                return "No Pokemon available";
             }
-        } else {
-            return "No Pokemon available";
+        } catch (Exception e) {
+            log.error("Error retrieving Pokemon: {}", e.getMessage());
+            return "Can't retrieve Pokemon";
         }
     }
+    
 }
