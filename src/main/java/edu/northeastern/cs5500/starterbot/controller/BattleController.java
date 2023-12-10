@@ -49,11 +49,11 @@ public class BattleController {
         String opponentDiscordId = currentBattle.getOpponentDiscordId();
         String myPokemonId = currentBattle.getMyPokemonId();
         String opponentPokemonId = currentBattle.getOpponentPokemonId();
-    
+
         try {
             Pokemon myPokemon = pokemonController.getPokemonById(myPokemonId);
             Pokemon opponentPokemon = pokemonController.getPokemonById(opponentPokemonId);
-    
+
             if (myPokemon != null && opponentPokemon != null) {
                 if (myPokemon.getTotal() > opponentPokemon.getTotal()) {
                     pokemonController.updatePokemonMood(myPokemon, 2);
@@ -78,5 +78,4 @@ public class BattleController {
             return "Can't retrieve Pokemon";
         }
     }
-    
 }

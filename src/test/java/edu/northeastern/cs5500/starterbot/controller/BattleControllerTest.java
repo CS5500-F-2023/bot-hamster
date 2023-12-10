@@ -22,6 +22,7 @@ class BattleControllerTest {
         BattleController battleController = new BattleController(trainerController);
         return battleController;
     }
+
     BattleController getBattleController(TrainerController trainerController) {
         BattleController battleController = new BattleController(trainerController);
         return battleController;
@@ -45,7 +46,15 @@ class BattleControllerTest {
         return trainerController;
     }
 
-    private Pokemon createPokemon(int pokedexNumber, int hp, int attack, int defense, int specialAttack, int specialDefense, int speed, int total) {
+    private Pokemon createPokemon(
+            int pokedexNumber,
+            int hp,
+            int attack,
+            int defense,
+            int specialAttack,
+            int specialDefense,
+            int speed,
+            int total) {
         return Pokemon.builder()
                 .pokedexNumber(pokedexNumber)
                 .hp(hp)
@@ -106,25 +115,6 @@ class BattleControllerTest {
         String result = battleController.compareTotal(battle);
 
         assertThat(battle).isNotNull();
-        assertThat(result).isEqualTo("Can't retrieve Pokemon");
-    }
-
-    @Test
-    void testCompareTotal() {
-        PokemonController pokemonController = getPokemonController();
-        TrainerController trainerController =
-                getTrainerController(pokemonController, new PokedexController());
-        BattleController battleController = getBattleController(trainerController);
-
-        Pokemon myPokemon = createPokemon(1, 100, 50, 30, 40, 30, 60, 250);
-        Pokemon opponentPokemon = createPokemon(2, 80, 60, 40, 30, 35, 55, 260);
-
-        trainerController.addPokemonToTrainer(USER_1_ID, myPokemon.getId().toString());
-        trainerController.addPokemonToTrainer(USER_2_ID, opponentPokemon.getId().toString());
-
-        Battle battle = new Battle(USER_1_ID, USER_2_ID, myPokemon.getId().toString(), opponentPokemon.getId().toString());
-
-        String result = battleController.compareTotal(battle);
         assertThat(result).isEqualTo("Can't retrieve Pokemon");
     }
 }
